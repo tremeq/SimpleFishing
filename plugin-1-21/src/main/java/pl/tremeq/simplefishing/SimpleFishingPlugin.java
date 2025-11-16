@@ -58,30 +58,103 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
         getLogger().info("    Autor: tremeq");
         getLogger().info("========================================");
 
-        // Inicjalizacja komponentów
-        inicjalizujKomponenty();
+        try {
+            // Inicjalizacja komponentów
+            getLogger().info("Inicjalizacja komponentów...");
+            inicjalizujKomponenty();
 
-        // Ładowanie konfiguracji
-        configManager = new ConfigManager(this);
-        configManager.zaladujKonfiguracje();
+            // Ładowanie konfiguracji
+            getLogger().info("Ładowanie konfiguracji...");
+            try {
+                configManager = new ConfigManager(this);
+                configManager.zaladujKonfiguracje();
+                getLogger().info("✓ Konfiguracja załadowana");
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas ładowania konfiguracji: " + e.getMessage());
+                e.printStackTrace();
+                getLogger().warning("Używam domyślnych wartości konfiguracji");
+            }
 
-        // Inicjalizacja menedżera plików danych graczy
-        playerDataFileManager = new PlayerDataFileManager(this);
+            // Inicjalizacja menedżera plików danych graczy
+            getLogger().info("Inicjalizacja systemu danych graczy...");
+            try {
+                playerDataFileManager = new PlayerDataFileManager(this);
+                getLogger().info("✓ System danych graczy zainicjalizowany");
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas inicjalizacji systemu danych: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        // Rejestracja komend
-        rejestracjaKomend();
+            // Rejestracja komend
+            getLogger().info("Rejestracja komend...");
+            try {
+                rejestracjaKomend();
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas rejestracji komend: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        // Rejestracja listenerów
-        rejestracjaListenerow();
+            // Rejestracja listenerów
+            getLogger().info("Rejestracja listenerów...");
+            try {
+                rejestracjaListenerow();
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas rejestracji listenerów: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        // Integracje z innymi pluginami
-        setupIntegracje();
+            // Integracje z innymi pluginami
+            getLogger().info("Konfiguracja integracji...");
+            try {
+                setupIntegracje();
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas konfiguracji integracji: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        getLogger().info("SimpleFishing został włączony pomyślnie!");
+            // Auto-save danych graczy co 5 minut
+            getLogger().info("Konfiguracja auto-save...");
+            try {
+                setupAutoSave();
+                getLogger().info("✓ Auto-save skonfigurowany (co 5 minut)");
+            } catch (Exception e) {
+                getLogger().severe("✗ BŁĄD podczas konfiguracji auto-save: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            getLogger().info("========================================");
+            getLogger().info("SimpleFishing został włączony pomyślnie!");
+            getLogger().info("========================================");
+
+        } catch (Exception e) {
+            getLogger().severe("========================================");
+            getLogger().severe("KRYTYCZNY BŁĄD podczas włączania pluginu!");
+            getLogger().severe("Plugin może nie działać poprawnie!");
+            getLogger().severe("Błąd: " + e.getMessage());
+            getLogger().severe("========================================");
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDisable() {
+        // Zapisz wszystkie dane graczy przed wyłączeniem
+        if (playerDataManager != null && playerDataFileManager != null) {
+            getLogger().info("Zapisywanie danych wszystkich graczy...");
+            int savedCount = 0;
+
+            for (var entry : playerDataManager.getAllCachedData().entrySet()) {
+                try {
+                    playerDataFileManager.savePlayerData(entry.getValue());
+                    savedCount++;
+                } catch (Exception e) {
+                    getLogger().severe("Błąd podczas zapisywania danych gracza " + entry.getKey() + ": " + e.getMessage());
+                }
+            }
+
+            getLogger().info("Zapisano dane " + savedCount + " graczy.");
+        }
+
         // Zamknięcie wszystkich GUI
         if (guiManager != null) {
             guiManager.zamknijWszystkie();
@@ -99,16 +172,91 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
      * Inicjalizuje wszystkie komponenty pluginu
      */
     private void inicjalizujKomponenty() {
-        this.fishRegistry = new FishRegistry();
-        this.baitRegistry = new BaitRegistry();
-        this.itemRegistry = new ItemRegistry();
-        this.playerDataManager = new PlayerDataManager();
-        this.contestManager = new ContestManager();
-        this.rodManager = new RodManager();
-        this.shopManager = new ShopManager();
-        this.guiManager = new GuiManager();
+        int successCount = 0;
+        int totalComponents = 8;
 
-        getLogger().info("Komponenty pluginu zainicjalizowane!");
+        try {
+            this.fishRegistry = new FishRegistry();
+            getLogger().info("✓ FishRegistry załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji FishRegistry: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.baitRegistry = new BaitRegistry();
+            getLogger().info("✓ BaitRegistry załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji BaitRegistry: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.itemRegistry = new ItemRegistry();
+            getLogger().info("✓ ItemRegistry załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji ItemRegistry: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.playerDataManager = new PlayerDataManager();
+            getLogger().info("✓ PlayerDataManager załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji PlayerDataManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.contestManager = new ContestManager();
+            getLogger().info("✓ ContestManager załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji ContestManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.rodManager = new RodManager(this);
+            getLogger().info("✓ RodManager załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji RodManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.shopManager = new ShopManager();
+            getLogger().info("✓ ShopManager załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji ShopManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.guiManager = new GuiManager();
+            getLogger().info("✓ GuiManager załadowany");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji GuiManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        getLogger().info("========================================");
+        getLogger().info("Komponenty: " + successCount + "/" + totalComponents + " załadowane pomyślnie");
+
+        if (successCount < totalComponents) {
+            getLogger().warning("UWAGA: Niektóre komponenty nie zostały załadowane!");
+            getLogger().warning("Plugin może działać niestabilnie!");
+        } else {
+            getLogger().info("Wszystkie komponenty załadowane poprawnie!");
+        }
+        getLogger().info("========================================");
     }
 
     /**
@@ -116,7 +264,8 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
      */
     private void rejestracjaKomend() {
         getCommand("simplefishing").setExecutor(new SimpleFishingCommand(this));
-        getLogger().info("Komendy zarejestrowane!");
+        getCommand("simplefishing").setTabCompleter(new pl.tremeq.simplefishing.commands.SimpleFishingTabCompleter(this));
+        getLogger().info("Komendy i tab completion zarejestrowane!");
     }
 
     /**
@@ -160,6 +309,35 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
         } else {
             getLogger().warning("Citizens nie zostało znalezione!");
         }
+    }
+
+    /**
+     * Konfiguruje auto-save danych graczy
+     * Zapisuje dane wszystkich online graczy co 5 minut
+     */
+    private void setupAutoSave() {
+        // Auto-save co 5 minut (6000 ticków)
+        long intervalTicks = 6000L;
+
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            if (playerDataManager == null || playerDataFileManager == null) {
+                return;
+            }
+
+            int savedCount = 0;
+            for (var entry : playerDataManager.getAllCachedData().entrySet()) {
+                try {
+                    playerDataFileManager.savePlayerData(entry.getValue());
+                    savedCount++;
+                } catch (Exception e) {
+                    getLogger().warning("Auto-save: Błąd podczas zapisywania danych gracza " + entry.getKey() + ": " + e.getMessage());
+                }
+            }
+
+            if (savedCount > 0) {
+                getLogger().info("Auto-save: Zapisano dane " + savedCount + " graczy.");
+            }
+        }, intervalTicks, intervalTicks);
     }
 
     /**
