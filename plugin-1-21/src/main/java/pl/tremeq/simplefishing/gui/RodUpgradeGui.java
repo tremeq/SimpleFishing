@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import pl.tremeq.simplefishing.SimpleFishingPlugin;
-import pl.tremeq.simplefishing.api.gui.Gui;
+import pl.tremeq.simplefishing.api.gui.SimpleFishingGui;
 import pl.tremeq.simplefishing.api.rod.FishingRod;
 import pl.tremeq.simplefishing.api.rod.RodTier;
 
@@ -25,24 +25,19 @@ import java.util.Optional;
  * GUI do ulepszania wędek
  * Pozwala graczom ulepszyć wędkę na wyższy tier
  */
-public class RodUpgradeGui implements Gui {
+public class RodUpgradeGui extends SimpleFishingGui {
 
     private final SimpleFishingPlugin plugin;
-    private final Player player;
-    private Inventory inv;
 
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
 
-    public RodUpgradeGui(SimpleFishingPlugin plugin, Player player) {
+    public RodUpgradeGui(Player player, SimpleFishingPlugin plugin) {
+        super(player, ChatColor.DARK_PURPLE + "⬆ Ulepszanie Wędek", 54);
         this.plugin = plugin;
-        this.player = player;
     }
 
     @Override
-    public void buduj() {
-        inv = plugin.getServer().createInventory(null, 54,
-            ChatColor.DARK_PURPLE + "⬆ Ulepszanie Wędek");
-
+    public void inicjalizuj() {
         // Dekoracje
         ItemStack filler = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta fillerMeta = filler.getItemMeta();
@@ -52,7 +47,7 @@ public class RodUpgradeGui implements Gui {
         }
 
         for (int i = 0; i < 54; i++) {
-            inv.setItem(i, filler);
+            inventory.setItem(i, filler);
         }
 
         // Sprawdź czy gracz trzyma custom wędkę
@@ -119,7 +114,7 @@ public class RodUpgradeGui implements Gui {
             currentMeta.setLore(lore);
             currentDisplay.setItemMeta(currentMeta);
         }
-        inv.setItem(20, currentDisplay);
+        inventory.setItem(20, currentDisplay);
 
         // Strzałka upgrade (slot 22)
         ItemStack arrow = new ItemStack(Material.SPECTRAL_ARROW);
@@ -132,7 +127,7 @@ public class RodUpgradeGui implements Gui {
             arrowMeta.setLore(arrowLore);
             arrow.setItemMeta(arrowMeta);
         }
-        inv.setItem(22, arrow);
+        inventory.setItem(22, arrow);
 
         // Następna wędka (slot 24)
         ItemStack nextDisplay = plugin.getRodManager().stworzCustomowaWedke(nextDef);
@@ -144,7 +139,7 @@ public class RodUpgradeGui implements Gui {
             nextMeta.setLore(lore);
             nextDisplay.setItemMeta(nextMeta);
         }
-        inv.setItem(24, nextDisplay);
+        inventory.setItem(24, nextDisplay);
 
         // Wymagania (sloty 37-43)
         wyswietlWymagania(currentDef, currentTier);
@@ -184,7 +179,7 @@ public class RodUpgradeGui implements Gui {
                 moneyMeta.setLore(lore);
                 money.setItemMeta(moneyMeta);
             }
-            inv.setItem(slot++, money);
+            inventory.setItem(slot++, money);
         }
 
         // Wymagane ryby
@@ -208,7 +203,7 @@ public class RodUpgradeGui implements Gui {
                 fishMeta.setLore(lore);
                 fishItem.setItemMeta(fishMeta);
             }
-            inv.setItem(slot++, fishItem);
+            inventory.setItem(slot++, fishItem);
             if (slot > 43) break;
         }
 
@@ -235,7 +230,7 @@ public class RodUpgradeGui implements Gui {
                 matMeta.setLore(lore);
                 matItem.setItemMeta(matMeta);
             }
-            inv.setItem(slot++, matItem);
+            inventory.setItem(slot++, matItem);
         }
     }
 
@@ -260,7 +255,7 @@ public class RodUpgradeGui implements Gui {
             meta.setLore(lore);
             upgradeButton.setItemMeta(meta);
         }
-        inv.setItem(49, upgradeButton);
+        inventory.setItem(49, upgradeButton);
     }
 
     /**
@@ -276,7 +271,7 @@ public class RodUpgradeGui implements Gui {
             backMeta.setLore(lore);
             back.setItemMeta(backMeta);
         }
-        inv.setItem(45, back);
+        inventory.setItem(45, back);
     }
 
     /**
@@ -293,7 +288,7 @@ public class RodUpgradeGui implements Gui {
             infoMeta.setLore(lore);
             info.setItemMeta(infoMeta);
         }
-        inv.setItem(22, info);
+        inventory.setItem(22, info);
         wyswietlPrzyciskPowrotu();
     }
 
@@ -310,7 +305,7 @@ public class RodUpgradeGui implements Gui {
             infoMeta.setLore(lore);
             info.setItemMeta(infoMeta);
         }
-        inv.setItem(22, info);
+        inventory.setItem(22, info);
         wyswietlPrzyciskPowrotu();
     }
 
@@ -319,7 +314,7 @@ public class RodUpgradeGui implements Gui {
      */
     private void wyswietlMaksymalnyTier(ItemStack rod, RodTier tier) {
         ItemStack display = rod.clone();
-        inv.setItem(22, display);
+        inventory.setItem(22, display);
 
         ItemStack info = new ItemStack(Material.DIAMOND);
         ItemMeta infoMeta = info.getItemMeta();
@@ -333,15 +328,8 @@ public class RodUpgradeGui implements Gui {
             infoMeta.setLore(lore);
             info.setItemMeta(infoMeta);
         }
-        inv.setItem(49, info);
+        inventory.setItem(49, info);
         wyswietlPrzyciskPowrotu();
-    }
-
-    @Override
-    public void otworz() {
-        buduj();
-        player.openInventory(inv);
-        plugin.getGuiManager().zarejestrujGui(player, this);
     }
 
     @Override
@@ -353,7 +341,10 @@ public class RodUpgradeGui implements Gui {
 
         // Powrót
         if (event.getSlot() == 45 && clicked.getType() == Material.ARROW) {
-            new MainGui(plugin, player).otworz();
+            player.closeInventory();
+            MainGui mainGui = new MainGui(player, plugin);
+            mainGui.inicjalizuj();
+            plugin.getGuiManager().otworzGui(player, mainGui);
             return;
         }
 
@@ -567,10 +558,5 @@ public class RodUpgradeGui implements Gui {
         }
 
         return result.toString().trim();
-    }
-
-    @Override
-    public Inventory getInv() {
-        return inv;
     }
 }

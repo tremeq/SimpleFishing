@@ -177,7 +177,8 @@ public class MainGui extends SimpleFishingGui {
             case 14: // Sklep Wędek
                 if (player.hasPermission("simplefishing.shop")) {
                     player.closeInventory();
-                    RodShopGui rodShopGui = new RodShopGui(plugin, player);
+                    RodShopGui rodShopGui = new RodShopGui(player, plugin);
+                    rodShopGui.inicjalizuj();
                     plugin.getGuiManager().otworzGui(player, rodShopGui);
                 }
                 break;
@@ -185,7 +186,8 @@ public class MainGui extends SimpleFishingGui {
             case 15: // Ulepsz Wędkę
                 if (player.hasPermission("simplefishing.rod.upgrade")) {
                     player.closeInventory();
-                    RodUpgradeGui upgradeGui = new RodUpgradeGui(plugin, player);
+                    RodUpgradeGui upgradeGui = new RodUpgradeGui(player, plugin);
+                    upgradeGui.inicjalizuj();
                     plugin.getGuiManager().otworzGui(player, upgradeGui);
                 }
                 break;

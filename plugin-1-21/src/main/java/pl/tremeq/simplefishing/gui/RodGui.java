@@ -113,7 +113,7 @@ public class RodGui extends SimpleFishingGui {
      * Wypełnia dostępne przynęty
      */
     private void wypelnijPrzynety() {
-        var allBaits = plugin.getBaitRegistry().getAllPrzynety();
+        var allBaits = plugin.getBaitRegistry().getAllBaity();
 
         if (allBaits.isEmpty()) {
             ItemStack noBaits = stworzItem(
@@ -168,18 +168,16 @@ public class RodGui extends SimpleFishingGui {
      */
     private ItemStack stworzPrzynetaItem(Bait bait) {
         List<String> lore = new ArrayList<>();
-        lore.add("&7Typ: &f" + bait.getTyp());
-        lore.add("");
         lore.add("&e&lBonusy:");
-        lore.add("&7Szczęście: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100));
+        lore.add("&7Bonus szansy: &a+" + String.format("%.1f%%", (bait.getSzansaBonusOgolem() - 1.0) * 100));
         int uses = bait.getMaxUzycia();
         String usesText = uses == -1 ? "∞" : String.valueOf(uses);
         lore.add("&7Użycia: &a" + usesText);
         lore.add("");
 
-        if (bait.getOpis() != null && !bait.getOpis().isEmpty()) {
+        if (bait.getLore() != null && !bait.getLore().isEmpty()) {
             lore.add("&7Opis:");
-            bait.getOpis().forEach(line -> lore.add("&f" + line));
+            bait.getLore().forEach(line -> lore.add("&f" + line));
             lore.add("");
         }
 
@@ -195,7 +193,7 @@ public class RodGui extends SimpleFishingGui {
             lore.add("&7Zdobądź ją łowiąc ryby");
         }
 
-        return stworzItem(bait.getMaterial(), "&d&l" + bait.getNazwa(), lore);
+        return stworzItem(bait.getItemStack().getType(), "&d&l" + bait.getNazwa(), lore);
     }
 
     /**
@@ -284,7 +282,7 @@ public class RodGui extends SimpleFishingGui {
             String usesText = uses == -1 ? "∞" : String.valueOf(uses);
 
             player.sendMessage(koloruj("&aPomyślnie nałożono przynętę: &e" + bait.getNazwa() + "&a!"));
-            player.sendMessage(koloruj("&7Bonus szczęścia: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100)));
+            player.sendMessage(koloruj("&7Bonus szansy: &a+" + String.format("%.1f%%", (bait.getSzansaBonusOgolem() - 1.0) * 100)));
             player.sendMessage(koloruj("&7Liczba użyć: &a" + usesText));
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
         } else {
@@ -335,16 +333,15 @@ public class RodGui extends SimpleFishingGui {
      * Tworzy ItemStack przynęty
      */
     private ItemStack createBaitItemStack(Bait bait) {
-        ItemStack item = new ItemStack(bait.getMaterial());
+        ItemStack item = new ItemStack(bait.getItemStack().getType());
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
             meta.setDisplayName(koloruj("&d&l" + bait.getNazwa()));
 
             List<String> lore = new ArrayList<>();
-            lore.add(koloruj("&7Typ: &f" + bait.getTyp()));
             lore.add(koloruj(""));
-            lore.add(koloruj("&7Szczęście: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100)));
+            lore.add(koloruj("&7Bonus szansy: &a+" + String.format("%.1f%%", (bait.getSzansaBonusOgolem() - 1.0) * 100)));
             int uses = bait.getMaxUzycia();
             String usesText = uses == -1 ? "∞" : String.valueOf(uses);
             lore.add(koloruj("&7Użycia: &a" + usesText));
