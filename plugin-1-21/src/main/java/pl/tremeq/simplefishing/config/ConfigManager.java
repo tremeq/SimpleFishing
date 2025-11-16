@@ -407,57 +407,14 @@ public class ConfigManager {
 
     /**
      * Ładuje wędki z konfiguracji
-     * @deprecated Wędki są teraz ładowane automatycznie przez RodRegistry z nowego systemu tierów
+     * @deprecated Wędki są teraz ładowane automatycznie przez RodRegistry z nowego systemu tierów.
+     * Ta metoda nie jest już używana i została zdezaktywowana.
      */
     @Deprecated
     private void zaladujWedki() {
-        if (rodConfig == null) return;
-
-        ConfigurationSection wedkiSection = rodConfig.getConfigurationSection("wedki");
-        if (wedkiSection == null) {
-            plugin.getLogger().warning("Brak sekcji 'wedki' w rods.yml!");
-            return;
-        }
-
-        int licznik = 0;
-
-        for (String key : wedkiSection.getKeys(false)) {
-            ConfigurationSection wedkaSection = wedkiSection.getConfigurationSection(key);
-            if (wedkaSection == null) continue;
-
-            try {
-                String nazwa = wedkaSection.getString("nazwa", key);
-                String displayName = wedkaSection.getString("display_name", nazwa);
-                List<String> lore = wedkaSection.getStringList("lore");
-
-                ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
-
-                double szczescie = wedkaSection.getDouble("szczescie", 1.0);
-                int maxBaity = wedkaSection.getInt("max_baity", 1);
-                double wytrzymalosc = wedkaSection.getDouble("wytrzymalosc", 100.0);
-                double cena = wedkaSection.getDouble("cena", 100.0);
-
-                FishingRod rod = new FishingRod.RodBuilder(key)
-                        .nazwa(nazwa)
-                        .displayName(displayName)
-                        .lore(lore)
-                        .itemStack(itemStack)
-                        .podstawowySzczescie(szczescie)
-                        .maxBaity(maxBaity)
-                        .wytrzymalosc(wytrzymalosc)
-                        .cena(cena)
-                        .build();
-
-                plugin.getRodManager().zarejestrujWedke(rod);
-                licznik++;
-
-            } catch (Exception e) {
-                plugin.getLogger().warning("Błąd podczas ładowania wędki: " + key);
-                e.printStackTrace();
-            }
-        }
-
-        plugin.getLogger().info("Załadowano " + licznik + " wędek!");
+        // Metoda została zdezaktywowana - wędki są teraz ładowane przez RodRegistry.zaladujDomyslneWedki()
+        // Stary system wędek został zastąpiony nowym systemem tierów (COMMON, UNCOMMON, RARE, EPIC, LEGENDARY)
+        plugin.getLogger().info("Pomijam ładowanie wędek z konfiguracji - używam nowego systemu tierów");
     }
 
     // Gettery
