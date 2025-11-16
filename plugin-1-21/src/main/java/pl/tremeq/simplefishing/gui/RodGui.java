@@ -236,6 +236,7 @@ public class RodGui extends SimpleFishingGui {
 
         // Powrót
         if (slot == 49) {
+        if (event.getSlot() == 22) {
             player.closeInventory();
             MainGui mainGui = new MainGui(player, plugin);
             mainGui.inicjalizuj();
@@ -352,6 +353,7 @@ public class RodGui extends SimpleFishingGui {
         }
 
         return item;
+        }
     }
 
     /**

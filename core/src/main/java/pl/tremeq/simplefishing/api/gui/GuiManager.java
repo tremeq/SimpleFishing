@@ -24,13 +24,28 @@ public class GuiManager {
 
     /**
      * Otwiera GUI dla gracza
+     * Thread-safe: Sprawdza czy inventory zostało otwarte
+     *
      * @param player Gracz
      * @param gui GUI do otwarcia
+     * @return true jeśli udało się otworzyć GUI
      */
-    public void otworzGui(Player player, SimpleFishingGui gui) {
-        zamknijGui(player);
-        otwarteMENU.put(player.getUniqueId(), gui);
-        player.openInventory(gui.getInventory());
+    public boolean otworzGui(Player player, SimpleFishingGui gui) {
+        zamknijGui(player); // Zamknij poprzednie GUI
+
+        // Spróbuj otworzyć inventory
+        org.bukkit.inventory.InventoryView view = player.openInventory(gui.getInventory());
+
+        // Sprawdź czy się powiodło (może być null jeśli inventory jest full lub inny błąd)
+        if (view != null) {
+            // Tylko jeśli inventory zostało otwarte, dodaj do mapy
+            otwarteMENU.put(player.getUniqueId(), gui);
+            return true;
+        } else {
+            // Nie udało się otworzyć - NIE dodajemy do mapy (zapobiega memory leak)
+            player.sendMessage("§cNie można otworzyć GUI! Spróbuj ponownie.");
+            return false;
+        }
     }
 
     /**

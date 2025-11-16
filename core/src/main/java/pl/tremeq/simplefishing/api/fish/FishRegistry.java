@@ -82,16 +82,31 @@ public class FishRegistry {
             return null;
         }
 
+        // VALIDATION: Sanitize luck modifier
+        if (Double.isNaN(luckModifier) || luckModifier < 0) {
+            luckModifier = 1.0;
+        }
+
         // Oblicz całkowitą wagę z modyfikatorem
         double totalWeight = 0;
         List<Fish> dostepneRyby = new ArrayList<>(ryby.values());
 
         for (Fish fish : dostepneRyby) {
+            // VALIDATION: Skip null fish
+            if (fish == null) {
+                continue;
+            }
+
             // Użyj fish.getSzansa() która może być customowa lub z rzadkości
             double weight = fish.getSzansa();
 
+            // VALIDATION: Ensure weight is valid and positive
+            if (Double.isNaN(weight) || weight < 0) {
+                weight = 0.1; // Default minimal weight
+            }
+
             // Modyfikator zwiększa szansę na rzadsze ryby
-            if (luckModifier > 1.0) {
+            if (luckModifier > 1.0 && fish.getRzadkosc() != null) {
                 // 9 rzadkości: 0=BARDZO_POSPOLITA, 8=BOSKA
                 double rarityBonus = (9 - fish.getRzadkosc().ordinal()) * (luckModifier - 1.0);
                 weight += rarityBonus;
@@ -99,14 +114,30 @@ public class FishRegistry {
             totalWeight += weight;
         }
 
+        // VALIDATION: If totalWeight is 0 or invalid, return random fish
+        if (totalWeight <= 0 || Double.isNaN(totalWeight) || Double.isInfinite(totalWeight)) {
+            // Return random fish from list (fallback)
+            return dostepneRyby.isEmpty() ? null : dostepneRyby.get(random.nextInt(dostepneRyby.size()));
+        }
+
         // Losuj
         double randomValue = random.nextDouble() * totalWeight;
         double currentWeight = 0;
 
         for (Fish fish : dostepneRyby) {
+            // VALIDATION: Skip null fish
+            if (fish == null) {
+                continue;
+            }
+
             double weight = fish.getSzansa();
 
-            if (luckModifier > 1.0) {
+            // VALIDATION: Ensure weight is valid
+            if (Double.isNaN(weight) || weight < 0) {
+                weight = 0.1;
+            }
+
+            if (luckModifier > 1.0 && fish.getRzadkosc() != null) {
                 double rarityBonus = (9 - fish.getRzadkosc().ordinal()) * (luckModifier - 1.0);
                 weight += rarityBonus;
             }
@@ -117,8 +148,13 @@ public class FishRegistry {
             }
         }
 
-        // Fallback - zwróć pierwszą rybę
-        return dostepneRyby.get(0);
+        // Fallback - zwróć pierwszą niepustą rybę
+        for (Fish fish : dostepneRyby) {
+            if (fish != null) {
+                return fish;
+            }
+        }
+        return null;
     }
 
     /**

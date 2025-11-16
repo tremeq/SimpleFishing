@@ -15,6 +15,7 @@ import pl.tremeq.simplefishing.api.player.PlayerDataManager;
 import pl.tremeq.simplefishing.api.rod.RodManager;
 import pl.tremeq.simplefishing.api.shop.ShopManager;
 import pl.tremeq.simplefishing.commands.SimpleFishingCommand;
+import pl.tremeq.simplefishing.commands.SimpleFishingTabCompleter;
 import pl.tremeq.simplefishing.config.ConfigManager;
 import pl.tremeq.simplefishing.data.PlayerDataFileManager;
 import pl.tremeq.simplefishing.listeners.*;

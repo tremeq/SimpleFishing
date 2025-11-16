@@ -14,8 +14,11 @@
 - 💰 **Sklep Ryb** - Sprzedaż złowionych ryb, integracja z Vault
 - 🎣 **Customowe Wędki** - System ulepszeń, sloty na przynęty, modyfikatory szczęścia
 - 🪱 **Przynęty** - Zaawansowane bonusy (ogólne, dla rzadkości, dla konkretnych ryb)
+- 🏺 **Przedmioty Morskie** - 26 unikalnych przedmiotów (śmieci, skarby, mityczne artefakty)
+- 📖 **Fish Collection GUI** - System kolekcjonowania ryb z odblokowanymi/zablokowanymi rybami i statystykami
 - 🖥️ **GUI** - Intuicyjne menu, integracja z Citizens NPC
-- 📊 **PlaceholderAPI** - Placeholdery do scoreboardów
+- 📊 **PlaceholderAPI** - Placeholdery do scoreboardów i rankingów
+- 💾 **System Danych Graczy** - Automatyczny zapis statystyk (YAML), cache w pamięci
 - ⚙️ **API** - Pełne API dla developerów
 
 ## 📥 Instalacja
@@ -58,7 +61,8 @@
 ## 📖 Dokumentacja
 
 - **Pełna dokumentacja:** [DOKUMENTACJA.md](DOKUMENTACJA.md)
-- **Przewodnik konfiguracji szans:** [KONFIGURACJA_SZANS.md](KONFIGURACJA_SZANS.md) ⭐ NOWOŚĆ!
+- **Przewodnik konfiguracji szans:** [KONFIGURACJA_SZANS.md](KONFIGURACJA_SZANS.md)
+- **Fish Collection GUI - Implementacja:** [FISH_COLLECTION_IMPLEMENTATION.md](FISH_COLLECTION_IMPLEMENTATION.md) ⭐ NOWOŚĆ!
 
 ## 🏗️ Struktura Projektu
 
@@ -69,32 +73,41 @@ SimpleFishing/
 │       ├── SimpleFishingAPI.java
 │       ├── fish/                  # System ryb
 │       ├── bait/                  # System przynęt
+│       ├── item/                  # System przedmiotów (śmieci, skarby)
 │       ├── rod/                   # System wędek
 │       ├── contest/               # System konkursów
 │       ├── shop/                  # System sklepu
+│       ├── player/                # System danych graczy ⭐
 │       ├── gui/                   # System GUI
-│       └── integration/           # Integracje
+│       └── integration/           # Integracje (PlaceholderAPI)
 │
 ├── plugin-1-21/                   # Implementacja dla 1.21
 │   └── src/main/
 │       ├── java/pl/tremeq/simplefishing/
 │       │   ├── SimpleFishingPlugin.java
 │       │   ├── commands/          # Komendy
-│       │   ├── listeners/         # Listenery
-│       │   ├── gui/               # GUI
+│       │   ├── listeners/         # Listenery (Fishing, Player, GUI, Citizens)
+│       │   ├── gui/               # GUI (MainGui, FishCollectionGui) ⭐
+│       │   ├── data/              # Zarządzanie plikami danych ⭐
 │       │   └── config/            # ConfigManager
 │       └── resources/
 │           ├── plugin.yml
 │           ├── config.yml
 │           ├── fish.yml           # Konfiguracja ryb
+│           ├── items.yml          # Konfiguracja przedmiotów ⭐
 │           ├── baits.yml          # Konfiguracja przynęt
 │           ├── rods.yml           # Konfiguracja wędek
 │           └── messages.yml       # Wiadomości
 │
+├── playerdata/                    # Dane graczy (UUID.yml) ⭐
 ├── DOKUMENTACJA.md                # Pełna dokumentacja
+├── KONFIGURACJA_SZANS.md          # Przewodnik konfiguracji szans
+├── FISH_COLLECTION_IMPLEMENTATION.md  # Dokumentacja Fish Collection ⭐
 ├── README.md                      # Ten plik
 └── pom.xml                        # Maven config
 ```
+
+⭐ = Nowe w najnowszej wersji
 
 ## 🎯 Przykłady Konfiguracji
 
@@ -172,14 +185,49 @@ api.getContestManager().rozpocznijKonkurs("konkurs_id");
 
 ## 📊 PlaceholderAPI
 
-Dostępne placeholdery:
+### Placeholdery Konkursów
 
-- `%simplefishing_contest_active%` - Czy jest aktywny konkurs
-- `%simplefishing_contest_name%` - Nazwa konkursu
-- `%simplefishing_contest_time%` - Pozostały czas
-- `%simplefishing_contest_place%` - Miejsce gracza
-- `%simplefishing_contest_leader_1%` - Lider rankingu
-- I wiele więcej...
+| Placeholder | Opis | Przykładowa wartość |
+|-------------|------|---------------------|
+| `%simplefishing_contest_active%` | Czy jest aktywny konkurs | `Tak` / `Nie` |
+| `%simplefishing_contest_name%` | Nazwa aktywnego konkursu | `Konkurs Weekendowy` / `Brak` |
+| `%simplefishing_contest_type%` | Typ aktywnego konkursu | `Największa Ryba` / `Brak` |
+| `%simplefishing_contest_time%` | Pozostały czas konkursu | `15:30` / `01:45:30` |
+| `%simplefishing_contest_place%` | Miejsce gracza w rankingu | `1` / `5` / `Brak` |
+| `%simplefishing_contest_score%` | Wynik gracza w konkursie | `245.67` / `0.0` |
+| `%simplefishing_contest_leader_1%` | Nick lidera (1. miejsce) | `Steve` / `Brak` |
+| `%simplefishing_contest_leader_2%` | Nick drugiego gracza | `Alex` / `Brak` |
+| `%simplefishing_contest_leader_3%` | Nick trzeciego gracza | `Herobrine` / `Brak` |
+| `%simplefishing_contest_leader_score_1%` | Wynik lidera (1. miejsce) | `456.78` / `0.0` |
+| `%simplefishing_contest_leader_score_2%` | Wynik drugiego gracza | `234.56` / `0.0` |
+| `%simplefishing_contest_leader_score_3%` | Wynik trzeciego gracza | `123.45` / `0.0` |
+
+### Placeholdery Statystyk Pluginu
+
+| Placeholder | Opis | Przykładowa wartość |
+|-------------|------|---------------------|
+| `%simplefishing_fish_count%` | Liczba zarejestrowanych ryb | `25` |
+| `%simplefishing_bait_count%` | Liczba zarejestrowanych przynęt | `10` |
+
+### Przykład użycia w scoreboardzie
+
+```yaml
+# Scoreboard dla aktywnego konkursu
+title: "&6&lKonkurs Łowienia"
+lines:
+  - "&7Aktywny: &e%simplefishing_contest_active%"
+  - "&7Nazwa: &e%simplefishing_contest_name%"
+  - "&7Czas: &e%simplefishing_contest_time%"
+  - ""
+  - "&7Twoje miejsce: &a%simplefishing_contest_place%"
+  - "&7Twój wynik: &a%simplefishing_contest_score%"
+  - ""
+  - "&e1. &6%simplefishing_contest_leader_1% &f- &a%simplefishing_contest_leader_score_1%"
+  - "&e2. &6%simplefishing_contest_leader_2% &f- &a%simplefishing_contest_leader_score_2%"
+  - "&e3. &6%simplefishing_contest_leader_3% &f- &a%simplefishing_contest_leader_score_3%"
+```
+
+**Uwaga:** Placeholdery `contest_leader_X` i `contest_leader_score_X` obsługują dowolny numer miejsca (X), np. `contest_leader_10` dla 10. miejsca.
 
 ## 🛠️ Kompilacja
 
