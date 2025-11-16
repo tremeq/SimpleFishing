@@ -31,7 +31,10 @@ public class CitizensListener implements Listener {
             // Otwórz główne GUI
             MainGui gui = new MainGui(player, plugin);
             gui.inicjalizuj();
-            plugin.getGuiManager().otworzGui(player, gui);
+            boolean opened = plugin.getGuiManager().otworzGui(player, gui);
+            if (!opened) {
+                player.sendMessage("§cNie można otworzyć GUI! Spróbuj ponownie.");
+            }
         }
     }
 }

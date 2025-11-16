@@ -8,10 +8,14 @@ import pl.tremeq.simplefishing.api.player.PlayerFishData;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 /**
  * Zarządza zapisem i odczytem danych graczy z plików YAML
  * Każdy gracz ma swój plik: playerdata/{UUID}.yml
+ *
+ * Thread-safe: Używa per-player locks dla synchronizacji I/O
  *
  * @author tremeq
  * @version 1.0.0
@@ -20,6 +24,9 @@ public class PlayerDataFileManager {
 
     private final SimpleFishingPlugin plugin;
     private final File playerDataFolder;
+
+    // Per-player locks dla thread-safety przy zapisie/odczycie
+    private final Map<UUID, Object> fileLocks = new ConcurrentHashMap<>();
 
     public PlayerDataFileManager(SimpleFishingPlugin plugin) {
         this.plugin = plugin;
@@ -33,20 +40,27 @@ public class PlayerDataFileManager {
 
     /**
      * Ładuje dane gracza z pliku YAML
+     * Thread-safe: Synchronizowane per-player
+     *
      * @param playerId UUID gracza
      * @return PlayerFishData lub nowy obiekt jeśli plik nie istnieje
      */
     public PlayerFishData loadPlayerData(UUID playerId) {
-        File playerFile = new File(playerDataFolder, playerId.toString() + ".yml");
+        // Pobierz lub stwórz lock dla tego gracza
+        Object lock = fileLocks.computeIfAbsent(playerId, k -> new Object());
 
-        PlayerFishData data = new PlayerFishData(playerId);
+        // Synchronizuj dostęp do pliku
+        synchronized (lock) {
+            File playerFile = new File(playerDataFolder, playerId.toString() + ".yml");
 
-        if (!playerFile.exists()) {
-            // Nowy gracz, zwróć pusty obiekt
-            return data;
-        }
+            PlayerFishData data = new PlayerFishData(playerId);
 
-        try {
+            if (!playerFile.exists()) {
+                // Nowy gracz, zwróć pusty obiekt
+                return data;
+            }
+
+            try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
 
             // Załaduj ogólne statystyki
@@ -92,50 +106,60 @@ public class PlayerDataFileManager {
                 // Na razie załadowano statystyki ryb, ogólne będą przeliczane automatycznie
             }
 
-        } catch (Exception e) {
-            plugin.getLogger().warning("Błąd podczas ładowania danych gracza " + playerId + ": " + e.getMessage());
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                plugin.getLogger().warning("Błąd podczas ładowania danych gracza " + playerId + ": " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        return data;
+            return data;
+        } // koniec synchronized
     }
 
     /**
      * Zapisuje dane gracza do pliku YAML
+     * Thread-safe: Synchronizowane per-player
+     *
      * @param data Dane gracza do zapisu
      */
     public void savePlayerData(PlayerFishData data) {
-        File playerFile = new File(playerDataFolder, data.getPlayerId().toString() + ".yml");
+        // Pobierz lub stwórz lock dla tego gracza
+        Object lock = fileLocks.computeIfAbsent(data.getPlayerId(), k -> new Object());
 
-        YamlConfiguration config = new YamlConfiguration();
+        // Synchronizuj dostęp do pliku
+        synchronized (lock) {
+            File playerFile = new File(playerDataFolder, data.getPlayerId().toString() + ".yml");
 
-        // Zapisz ogólne statystyki
-        config.set("player_id", data.getPlayerId().toString());
-        config.set("total_fish_caught", data.getTotalFishCaught());
-        config.set("total_length_caught", data.getTotalLengthCaught());
-        config.set("contests_won", data.getContestsWon());
-        config.set("total_money_earned", data.getTotalMoneyEarned());
-        config.set("unique_fish_caught", data.getUniqueFishCaught());
+            YamlConfiguration config = new YamlConfiguration();
 
-        // Zapisz statystyki ryb
-        for (var entry : data.getAllFishStatistics().entrySet()) {
-            String fishId = entry.getKey();
-            PlayerFishData.FishStatistics stats = entry.getValue();
+            // Zapisz ogólne statystyki
+            config.set("player_id", data.getPlayerId().toString());
+            config.set("total_fish_caught", data.getTotalFishCaught());
+            config.set("total_length_caught", data.getTotalLengthCaught());
+            config.set("contests_won", data.getContestsWon());
+            config.set("total_money_earned", data.getTotalMoneyEarned());
+            config.set("unique_fish_caught", data.getUniqueFishCaught());
 
-            String path = "fish_statistics." + fishId;
-            config.set(path + ".times_caught", stats.getTimesCaught());
-            config.set(path + ".largest_caught", stats.getLargestCaught());
-            config.set(path + ".total_length", stats.getTotalLength());
-            config.set(path + ".average_length", stats.getAverageLength());
-        }
+            // Zapisz statystyki ryb
+            for (var entry : data.getAllFishStatistics().entrySet()) {
+                String fishId = entry.getKey();
+                PlayerFishData.FishStatistics stats = entry.getValue();
 
-        // Zapisz do pliku
-        try {
-            config.save(playerFile);
-        } catch (IOException e) {
-            plugin.getLogger().warning("Błąd podczas zapisywania danych gracza " + data.getPlayerId() + ": " + e.getMessage());
-            e.printStackTrace();
-        }
+                String path = "fish_statistics." + fishId;
+                config.set(path + ".times_caught", stats.getTimesCaught());
+                config.set(path + ".largest_caught", stats.getLargestCaught());
+                config.set(path + ".total_length", stats.getTotalLength());
+                config.set(path + ".average_length", stats.getAverageLength());
+            }
+
+            // Zapisz do pliku
+            try {
+                config.save(playerFile);
+            } catch (IOException e) {
+                plugin.getLogger().warning("Błąd podczas zapisywania danych gracza " + data.getPlayerId() + ": " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Failed to save player data", e); // Rzuć wyjątek dla error handling
+            }
+        } // koniec synchronized
     }
 
     /**

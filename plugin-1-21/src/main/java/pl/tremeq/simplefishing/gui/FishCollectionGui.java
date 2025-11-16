@@ -36,9 +36,37 @@ public class FishCollectionGui extends SimpleFishingGui {
         this.plugin = plugin;
         this.currentPage = 0;
 
+        // VALIDATION: Check if fish registry is initialized and has fish
+        if (plugin.getFishRegistry() == null) {
+            plugin.getLogger().severe("FishRegistry is null! Cannot create Fish Collection GUI.");
+            player.sendMessage("§cBłąd: System ryb nie został zainicjalizowany! Skontaktuj się z administratorem.");
+            this.allFish = new ArrayList<>();
+            return;
+        }
+
+        var fishCollection = plugin.getFishRegistry().getAllRyby();
+        if (fishCollection == null || fishCollection.isEmpty()) {
+            plugin.getLogger().warning("Fish registry is empty! No fish registered for Fish Collection GUI.");
+            player.sendMessage("§eBrak zarejestrowanych ryb w kolekcji.");
+            this.allFish = new ArrayList<>();
+            return;
+        }
+
         // Pobierz wszystkie ryby i posortuj po rzadkości
-        this.allFish = new ArrayList<>(plugin.getFishRegistry().getAllRyby());
-        this.allFish.sort(Comparator.comparingInt(f -> f.getRzadkosc().ordinal()));
+        this.allFish = new ArrayList<>(fishCollection);
+
+        // Safe sort with null rzadkosc handling
+        this.allFish.sort(Comparator.comparingInt(f -> {
+            if (f == null) {
+                plugin.getLogger().warning("Null fish found in registry during sort!");
+                return 999; // Sort to end
+            }
+            if (f.getRzadkosc() == null) {
+                plugin.getLogger().warning("Fish " + f.getId() + " has null rzadkosc!");
+                return 999; // Sort to end
+            }
+            return f.getRzadkosc().ordinal();
+        }));
     }
 
     @Override
@@ -92,7 +120,20 @@ public class FishCollectionGui extends SimpleFishingGui {
      * Wypełnia ryby w GUI
      */
     private void wypelnijRyby() {
+        // VALIDATION: Check if allFish is valid
+        if (allFish == null || allFish.isEmpty()) {
+            // Fill all fish slots with AIR
+            for (int slot = 9; slot < 45; slot++) {
+                inventory.setItem(slot, new ItemStack(Material.AIR));
+            }
+            return;
+        }
+
         PlayerFishData playerData = plugin.getPlayerDataManager().getPlayerData(player.getUniqueId());
+        if (playerData == null) {
+            plugin.getLogger().warning("PlayerData is null for player " + player.getName() + " in Fish Collection GUI!");
+            return;
+        }
 
         int startIndex = currentPage * FISH_SLOTS_PER_PAGE;
         int endIndex = Math.min(startIndex + FISH_SLOTS_PER_PAGE, allFish.size());
@@ -101,6 +142,13 @@ public class FishCollectionGui extends SimpleFishingGui {
 
         for (int i = startIndex; i < endIndex; i++) {
             Fish fish = allFish.get(i);
+
+            // Skip null fish (should not happen but be safe)
+            if (fish == null) {
+                plugin.getLogger().warning("Null fish at index " + i + " in allFish list!");
+                continue;
+            }
+
             ItemStack fishItem;
 
             if (playerData.hasCaughtFish(fish.getId())) {
@@ -254,6 +302,10 @@ public class FishCollectionGui extends SimpleFishingGui {
      * Oblicza maksymalną stronę
      */
     private int getMaxPage() {
+        // VALIDATION: Handle empty allFish
+        if (allFish == null || allFish.isEmpty()) {
+            return 0;
+        }
         return (int) Math.ceil((double) allFish.size() / FISH_SLOTS_PER_PAGE) - 1;
     }
 
