@@ -140,18 +140,19 @@ public class RodManager {
 
         // Klucze PDC
         NamespacedKey baitIdKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_id");
-        NamespacedKey baitTimeKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_time");
-        NamespacedKey baitDurationKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_duration");
+        NamespacedKey baitUsesKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_uses");
 
         // Sprawdź czy przynęta już istnieje na wędce
         if (meta.getPersistentDataContainer().has(baitIdKey)) {
             return false; // Już ma tę przynętę
         }
 
-        // Zapisz przynętę do PDC
+        // Zapisz przynętę do PDC z liczbą użyć
         meta.getPersistentDataContainer().set(baitIdKey, PersistentDataType.STRING, bait.getId());
-        meta.getPersistentDataContainer().set(baitTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
-        meta.getPersistentDataContainer().set(baitDurationKey, PersistentDataType.INTEGER, bait.getCzasTrwania());
+        int maxUses = bait.getMaxUzycia();
+        // Jeśli maxUzycia = -1 (nieskończone), zapisz jako 9999
+        meta.getPersistentDataContainer().set(baitUsesKey, PersistentDataType.INTEGER,
+            maxUses == -1 ? 9999 : maxUses);
 
         // Aktualizuj lore wędki
         aktualizujLoreWedki(meta);
@@ -161,7 +162,7 @@ public class RodManager {
     }
 
     /**
-     * Aktualizuje lore wędki aby pokazać aktywne przynęty
+     * Aktualizuje lore wędki aby pokazać aktywne przynęty z liczbą użyć
      * @param meta ItemMeta wędki
      */
     private void aktualizujLoreWedki(ItemMeta meta) {
@@ -199,7 +200,6 @@ public class RodManager {
         if (meta == null) return baits;
 
         var container = meta.getPersistentDataContainer();
-        long currentTime = System.currentTimeMillis();
 
         // Przejdź przez wszystkie klucze i znajdź przynęty
         for (NamespacedKey key : container.getKeys()) {
@@ -208,27 +208,20 @@ public class RodManager {
             String baitId = container.get(key, PersistentDataType.STRING);
             if (baitId == null) continue;
 
-            // Pobierz czas aplikacji i czas trwania
-            NamespacedKey timeKey = new NamespacedKey(plugin, "bait_" + baitId + "_time");
-            NamespacedKey durationKey = new NamespacedKey(plugin, "bait_" + baitId + "_duration");
+            // Pobierz liczbę pozostałych użyć
+            NamespacedKey usesKey = new NamespacedKey(plugin, "bait_" + baitId + "_uses");
+            Integer usesLeft = container.get(usesKey, PersistentDataType.INTEGER);
 
-            Long applicationTime = container.get(timeKey, PersistentDataType.LONG);
-            Integer duration = container.get(durationKey, PersistentDataType.INTEGER);
+            if (usesLeft == null) continue;
 
-            if (applicationTime == null || duration == null) continue;
-
-            // Oblicz pozostały czas
-            long elapsedSeconds = (currentTime - applicationTime) / 1000;
-            long remainingSeconds = duration - elapsedSeconds;
-
-            if (remainingSeconds > 0) {
-                // Przynęta nadal aktywna
+            if (usesLeft > 0) {
+                // Przynęta nadal ma użycia
                 String baitName = baitId; // Można by pobrać nazwę z registry
+                String usesDisplay = usesLeft >= 9999 ? "∞" : String.valueOf(usesLeft);
                 baits.add(ChatColor.GRAY + "  • " + ChatColor.AQUA + baitName +
-                         ChatColor.GRAY + " (" + ChatColor.GREEN + remainingSeconds + "s" + ChatColor.GRAY + ")");
-            } else {
-                // Przynęta wygasła - można by ją usunąć, ale zostawiamy to do czyszczenia
+                         ChatColor.GRAY + " (" + ChatColor.GREEN + usesDisplay + " użyć" + ChatColor.GRAY + ")");
             }
+            // Jeśli usesLeft = 0, przynęta jest wyczerpana i nie pokazujemy jej
         }
 
         return baits;
@@ -253,14 +246,65 @@ public class RodManager {
     }
 
     /**
-     * Usuwa przynętę z wędki
+     * Zużywa jedno użycie przynęty na wędce
+     * Wywoływane po każdym łowieniu
+     * @param rodItem ItemStack wędki
+     * @param baitId ID przynęty do zużycia
+     * @return true jeśli udało się zużyć, false jeśli brak użyć lub przynęty
+     */
+    public boolean zuzyjPrzynete(ItemStack rodItem, String baitId) {
+        if (rodItem == null || !rodItem.hasItemMeta()) return false;
+
+        ItemMeta meta = rodItem.getItemMeta();
+        if (meta == null) return false;
+
+        NamespacedKey usesKey = new NamespacedKey(plugin, "bait_" + baitId + "_uses");
+        Integer usesLeft = meta.getPersistentDataContainer().get(usesKey, PersistentDataType.INTEGER);
+
+        if (usesLeft == null || usesLeft <= 0) return false;
+
+        // Zmniejsz użycia
+        int newUses = usesLeft - 1;
+
+        if (newUses > 0) {
+            // Przynęta nadal ma użycia - aktualizuj
+            meta.getPersistentDataContainer().set(usesKey, PersistentDataType.INTEGER, newUses);
+        } else {
+            // Przynęta wyczerpana - usuń z PDC
+            NamespacedKey baitIdKey = new NamespacedKey(plugin, "bait_" + baitId + "_id");
+            meta.getPersistentDataContainer().remove(baitIdKey);
+            meta.getPersistentDataContainer().remove(usesKey);
+        }
+
+        // Aktualizuj lore
+        aktualizujLoreWedki(meta);
+        rodItem.setItemMeta(meta);
+        return true;
+    }
+
+    /**
+     * Usuwa przynętę z wędki (całkowicie)
      * @param rodItem ItemStack wędki
      * @param baitId ID przynęty do usunięcia
      * @return true jeśli udało się usunąć
      */
     public boolean usunPrzynete(ItemStack rodItem, String baitId) {
-        // Implementacja NBT - będzie w module 1.21
-        return false;
+        if (rodItem == null || !rodItem.hasItemMeta()) return false;
+
+        ItemMeta meta = rodItem.getItemMeta();
+        if (meta == null) return false;
+
+        NamespacedKey baitIdKey = new NamespacedKey(plugin, "bait_" + baitId + "_id");
+        NamespacedKey usesKey = new NamespacedKey(plugin, "bait_" + baitId + "_uses");
+
+        // Usuń z PDC
+        meta.getPersistentDataContainer().remove(baitIdKey);
+        meta.getPersistentDataContainer().remove(usesKey);
+
+        // Aktualizuj lore
+        aktualizujLoreWedki(meta);
+        rodItem.setItemMeta(meta);
+        return true;
     }
 
     /**
@@ -284,7 +328,7 @@ public class RodManager {
         if (meta == null) return item;
 
         // Ustaw nazwę z kolorem tieru
-        meta.setDisplayName(rod.getTier().getKolor() + ChatColor.BOLD + rod.getNazwa());
+        meta.setDisplayName(rod.getTier().getKolor().toString() + ChatColor.BOLD + rod.getNazwa());
 
         // Dodaj lore
         List<String> lore = new ArrayList<>();
@@ -326,7 +370,7 @@ public class RodManager {
         meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, nowaDefinicja.getId());
 
         // Aktualizuj display name z nowym kolorem
-        meta.setDisplayName(nowyTier.getKolor() + ChatColor.BOLD + nowaDefinicja.getNazwa());
+        meta.setDisplayName(nowyTier.getKolor().toString() + ChatColor.BOLD + nowaDefinicja.getNazwa());
 
         // Aktualizuj lore
         List<String> lore = new ArrayList<>();
