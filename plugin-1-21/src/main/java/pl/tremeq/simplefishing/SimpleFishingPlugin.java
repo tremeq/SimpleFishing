@@ -13,6 +13,7 @@ import pl.tremeq.simplefishing.api.gui.GuiManager;
 import pl.tremeq.simplefishing.api.integration.SimpleFishingPlaceholder;
 import pl.tremeq.simplefishing.api.player.PlayerDataManager;
 import pl.tremeq.simplefishing.api.rod.RodManager;
+import pl.tremeq.simplefishing.api.rod.RodRegistry;
 import pl.tremeq.simplefishing.api.shop.ShopManager;
 import pl.tremeq.simplefishing.commands.SimpleFishingCommand;
 import pl.tremeq.simplefishing.commands.SimpleFishingTabCompleter;
@@ -38,6 +39,7 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
     private PlayerDataManager playerDataManager;
     private ContestManager contestManager;
     private RodManager rodManager;
+    private RodRegistry rodRegistry;
     private ShopManager shopManager;
     private GuiManager guiManager;
     private ConfigManager configManager;
@@ -174,7 +176,7 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
      */
     private void inicjalizujKomponenty() {
         int successCount = 0;
-        int totalComponents = 8;
+        int totalComponents = 9;
 
         try {
             this.fishRegistry = new FishRegistry();
@@ -227,6 +229,15 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
             successCount++;
         } catch (Exception e) {
             getLogger().severe("✗ BŁĄD podczas inicjalizacji RodManager: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            this.rodRegistry = new RodRegistry();
+            getLogger().info("✓ RodRegistry załadowany (" + rodRegistry.getIloscWedek() + " wędek)");
+            successCount++;
+        } catch (Exception e) {
+            getLogger().severe("✗ BŁĄD podczas inicjalizacji RodRegistry: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -391,6 +402,11 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
     @Override
     public RodManager getRodManager() {
         return rodManager;
+    }
+
+    @Override
+    public RodRegistry getRodRegistry() {
+        return rodRegistry;
     }
 
     @Override

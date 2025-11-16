@@ -69,9 +69,14 @@ public class RodManager {
      * @return true jeśli jest customową wędką
      */
     public boolean czyCustomowaWedka(ItemStack item) {
-        if (item == null) return false;
-        // Sprawdzenie NBT - będzie implementowane w module 1.21
-        return false;
+        if (item == null || !item.hasItemMeta()) return false;
+        if (item.getType() != Material.FISHING_ROD) return false;
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+
+        NamespacedKey key = new NamespacedKey(plugin, "custom_rod_id");
+        return meta.getPersistentDataContainer().has(key, PersistentDataType.STRING);
     }
 
     /**
@@ -80,8 +85,34 @@ public class RodManager {
      * @return Optional z ID wędki lub pusty
      */
     public Optional<String> getWedkaId(ItemStack item) {
-        // Odczyt NBT - będzie implementowane w module 1.21
-        return Optional.empty();
+        if (!czyCustomowaWedka(item)) return Optional.empty();
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return Optional.empty();
+
+        NamespacedKey key = new NamespacedKey(plugin, "custom_rod_id");
+        String id = meta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+
+        return Optional.ofNullable(id);
+    }
+
+    /**
+     * Pobiera tier wędki z ItemStack
+     * @param item ItemStack wędki
+     * @return Optional z tierem lub pusty
+     */
+    public Optional<RodTier> getTierWedki(ItemStack item) {
+        if (!czyCustomowaWedka(item)) return Optional.empty();
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return Optional.empty();
+
+        NamespacedKey key = new NamespacedKey(plugin, "custom_rod_tier");
+        String tierName = meta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+
+        if (tierName == null) return Optional.of(RodTier.COMMON);
+
+        return Optional.of(RodTier.fromString(tierName));
     }
 
     /**
@@ -235,24 +266,85 @@ public class RodManager {
     /**
      * Oblicza całkowite szczęście wędki z wszystkimi modyfikatorami
      * @param rodItem ItemStack wędki
-     * @return Wartość szczęścia
+     * @return Wartość szczęścia (luck bonus z tieru)
      */
-    public double obliczSzczescie(ItemStack rodItem) {
-        Optional<String> rodId = getWedkaId(rodItem);
-        if (rodId.isEmpty()) return 1.0;
+    public int obliczSzczescie(ItemStack rodItem) {
+        Optional<RodTier> tier = getTierWedki(rodItem);
+        return tier.map(RodTier::getLuckBonus).orElse(0);
+    }
 
-        Optional<FishingRod> rod = getWedka(rodId.get());
-        if (rod.isEmpty()) return 1.0;
+    /**
+     * Tworzy ItemStack customowej wędki z PDC
+     * @param rod Definicja wędki z FishingRod
+     * @return ItemStack z customową wędką
+     */
+    public ItemStack stworzCustomowaWedke(FishingRod rod) {
+        ItemStack item = new ItemStack(Material.FISHING_ROD);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return item;
 
-        double luck = rod.get().getPodstawowySzczescie();
+        // Ustaw nazwę z kolorem tieru
+        meta.setDisplayName(rod.getTier().getKolor() + ChatColor.BOLD + rod.getNazwa());
 
-        // Dodaj bonusy z ulepszeń
-        for (RodEnchantment ench : rod.get().getUlepszenia()) {
-            if (ench.getTyp() == RodEnchantment.RodEnchantmentType.LUCK_BOOST) {
-                luck += ench.getWartosc();
-            }
+        // Dodaj lore
+        List<String> lore = new ArrayList<>();
+        for (String line : rod.getLore()) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', line));
+        }
+        meta.setLore(lore);
+
+        // Zapisz dane do PDC
+        NamespacedKey idKey = new NamespacedKey(plugin, "custom_rod_id");
+        NamespacedKey tierKey = new NamespacedKey(plugin, "custom_rod_tier");
+
+        meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, rod.getId());
+        meta.getPersistentDataContainer().set(tierKey, PersistentDataType.STRING, rod.getTier().name());
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /**
+     * Ulepsza wędkę na następny tier
+     * UWAGA: Ta metoda NIE sprawdza wymagań! Sprawdź je przed wywołaniem!
+     * @param rodItem ItemStack wędki do ulepszenia
+     * @param nowyTier Nowy tier wędki
+     * @param nowaDefinicja Definicja wędki nowego tieru
+     * @return true jeśli udało się ulepszyć
+     */
+    public boolean ulepszWedke(ItemStack rodItem, RodTier nowyTier, FishingRod nowaDefinicja) {
+        if (!czyCustomowaWedka(rodItem)) return false;
+
+        ItemMeta meta = rodItem.getItemMeta();
+        if (meta == null) return false;
+
+        // Aktualizuj tier w PDC
+        NamespacedKey tierKey = new NamespacedKey(plugin, "custom_rod_tier");
+        NamespacedKey idKey = new NamespacedKey(plugin, "custom_rod_id");
+
+        meta.getPersistentDataContainer().set(tierKey, PersistentDataType.STRING, nowyTier.name());
+        meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, nowaDefinicja.getId());
+
+        // Aktualizuj display name z nowym kolorem
+        meta.setDisplayName(nowyTier.getKolor() + ChatColor.BOLD + nowaDefinicja.getNazwa());
+
+        // Aktualizuj lore
+        List<String> lore = new ArrayList<>();
+        for (String line : nowaDefinicja.getLore()) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', line));
         }
 
-        return luck;
+        // Zachowaj istniejące przynęty w lore
+        List<String> aktywnePrzynety = getAktywnePrzynety(meta);
+        if (!aktywnePrzynety.isEmpty()) {
+            lore.add("");
+            lore.add(ChatColor.LIGHT_PURPLE + "🎣 Aktywne Przynęty:");
+            lore.addAll(aktywnePrzynety);
+        }
+
+        meta.setLore(lore);
+        rodItem.setItemMeta(meta);
+
+        return true;
     }
 }

@@ -72,22 +72,53 @@ public class MainGui extends SimpleFishingGui {
                     "&eKliknij aby otworzyć!"
                 )
             );
-            ustawItem(14, contests);
+            ustawItem(13, contests);
         }
 
-        // Wędki i ulepszenia
-        if (player.hasPermission("simplefishing.rod.upgrade")) {
-            ItemStack rods = stworzItem(
+        // Sklep Wędek
+        if (player.hasPermission("simplefishing.shop")) {
+            ItemStack rodShop = stworzItem(
                 Material.FISHING_ROD,
-                "&d&lWędki",
+                "&e&lSklep Wędek",
                 Arrays.asList(
-                    "&7Zarządzaj swoimi wędkami",
-                    "&7i nakładaj przynęty",
+                    "&7Kup nową wędkę!",
+                    "&7Początkowa cena: &610,000 $",
                     "",
                     "&eKliknij aby otworzyć!"
                 )
             );
-            ustawItem(16, rods);
+            ustawItem(14, rodShop);
+        }
+
+        // Ulepsz Wędkę
+        if (player.hasPermission("simplefishing.rod.upgrade")) {
+            ItemStack rodUpgrade = stworzItem(
+                Material.ANVIL,
+                "&5&lUlepsz Wędkę",
+                Arrays.asList(
+                    "&7Ulepsz swoją wędkę",
+                    "&7na wyższy tier!",
+                    "&c&lWYMAGA DUŻYCH ZASOBÓW",
+                    "",
+                    "&eKliknij aby otworzyć!"
+                )
+            );
+            ustawItem(15, rodUpgrade);
+        }
+
+        // Zarządzaj Przynętami
+        if (player.hasPermission("simplefishing.rod.bait")) {
+            ItemStack baits = stworzItem(
+                Material.TROPICAL_FISH_BUCKET,
+                "&d&lPrzynęty",
+                Arrays.asList(
+                    "&7Nakładaj przynęty",
+                    "&7na swoją wędkę!",
+                    "",
+                    "&eKliknij aby otworzyć!"
+                )
+            );
+            ustawItem(16, baits);
         }
 
         // Informacje
@@ -125,7 +156,7 @@ public class MainGui extends SimpleFishingGui {
                 plugin.getGuiManager().otworzGui(player, fishCollectionGui);
                 break;
 
-            case 12: // Sklep
+            case 12: // Sklep Ryb
                 if (player.hasPermission("simplefishing.shop")) {
                     player.closeInventory();
                     ShopGui shopGui = new ShopGui(player, plugin);
@@ -134,7 +165,7 @@ public class MainGui extends SimpleFishingGui {
                 }
                 break;
 
-            case 14: // Konkursy
+            case 13: // Konkursy
                 if (player.hasPermission("simplefishing.contest")) {
                     player.closeInventory();
                     ContestGui contestGui = new ContestGui(player, plugin);
@@ -143,8 +174,24 @@ public class MainGui extends SimpleFishingGui {
                 }
                 break;
 
-            case 16: // Wędki
+            case 14: // Sklep Wędek
+                if (player.hasPermission("simplefishing.shop")) {
+                    player.closeInventory();
+                    RodShopGui rodShopGui = new RodShopGui(plugin, player);
+                    plugin.getGuiManager().otworzGui(player, rodShopGui);
+                }
+                break;
+
+            case 15: // Ulepsz Wędkę
                 if (player.hasPermission("simplefishing.rod.upgrade")) {
+                    player.closeInventory();
+                    RodUpgradeGui upgradeGui = new RodUpgradeGui(plugin, player);
+                    plugin.getGuiManager().otworzGui(player, upgradeGui);
+                }
+                break;
+
+            case 16: // Przynęty (zarządzaj)
+                if (player.hasPermission("simplefishing.rod.bait")) {
                     player.closeInventory();
                     RodGui rodGui = new RodGui(player, plugin);
                     rodGui.inicjalizuj();
