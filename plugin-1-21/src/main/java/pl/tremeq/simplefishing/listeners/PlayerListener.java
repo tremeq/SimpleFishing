@@ -40,20 +40,29 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         var playerId = event.getPlayer().getUniqueId();
 
-        // Pobierz dane z cache
-        var playerData = plugin.getPlayerDataManager().removeFromCache(playerId);
-
-        // Zapisz asynchronicznie
-        if (playerData != null) {
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                plugin.getPlayerDataFileManager().savePlayerData(playerData);
-                plugin.getLogger().info("Zapisano dane gracza: " + event.getPlayer().getName());
-            });
-        }
-
-        // Zamknij GUI gracza jeśli ma otwarte
+        // Zamknij GUI gracza jeśli ma otwarte (PRZED zapisem danych)
         if (plugin.getGuiManager().maOtwarteGui(event.getPlayer())) {
             plugin.getGuiManager().zamknijGui(event.getPlayer());
+        }
+
+        // Pobierz dane z cache (ale NIE usuwaj jeszcze!)
+        var playerData = plugin.getPlayerDataManager().getPlayerData(playerId);
+
+        if (playerData != null) {
+            // NAJPIERW zapisz synchronicznie (blokując), POTEM usuń z cache
+            try {
+                plugin.getPlayerDataFileManager().savePlayerData(playerData);
+                plugin.getLogger().info("Zapisano dane gracza: " + event.getPlayer().getName());
+
+                // Dopiero TERAZ usuń z cache (po udanym zapisie)
+                plugin.getPlayerDataManager().removeFromCache(playerId);
+            } catch (Exception e) {
+                plugin.getLogger().severe("KRYTYCZNY BŁĄD: Nie udało się zapisać danych gracza " +
+                    event.getPlayer().getName() + " (" + playerId + "): " + e.getMessage());
+                e.printStackTrace();
+                // NIE usuwamy z cache jeśli zapis się nie powiódł!
+                // Dane pozostają w cache i zostaną zapisane przez auto-save lub onDisable
+            }
         }
     }
 }

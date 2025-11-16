@@ -65,7 +65,8 @@ public class FishingListener implements Listener {
             event.getCaught().remove();
         }
 
-        if (dropItem && plugin.getItemRegistry().getLiczbaPrzedmiotow() > 0) {
+        // VALIDATION: Check ItemRegistry before accessing
+        if (dropItem && plugin.getItemRegistry() != null && plugin.getItemRegistry().getLiczbaPrzedmiotow() > 0) {
             // WYLOSUJ PRZEDMIOT
             Item item = plugin.getItemRegistry().wylosujPrzedmiot(luckModifier);
 
@@ -88,17 +89,48 @@ public class FishingListener implements Listener {
         }
 
         // WYLOSUJ RYBĘ (domyślne zachowanie)
+        // VALIDATION: Check FishRegistry before accessing
+        if (plugin.getFishRegistry() == null) {
+            plugin.getLogger().severe("FishRegistry is null in FishingListener!");
+            player.sendMessage(koloruj("&cBłąd systemu ryb! Skontaktuj się z administratorem."));
+            return;
+        }
+
         Fish fish = plugin.getFishRegistry().wylosujRybe(luckModifier);
 
         if (fish == null) {
             // Brak zarejestrowanych ryb, użyj domyślnego mechanizmu
+            plugin.getLogger().warning("No fish drawn from FishRegistry! Registry may be empty.");
             return;
         }
 
-        // Wylosuj długość ryby
+        // VALIDATION: Validate fish length range
         double minLen = fish.getMinDlugosc();
         double maxLen = fish.getMaxDlugosc();
+
+        // Check for invalid length values
+        if (Double.isNaN(minLen) || Double.isNaN(maxLen) || minLen < 0 || maxLen < 0) {
+            plugin.getLogger().severe("Fish " + fish.getId() + " has invalid length range: " + minLen + " - " + maxLen);
+            minLen = 10.0;
+            maxLen = 50.0;
+        }
+
+        // Ensure minLen <= maxLen
+        if (minLen > maxLen) {
+            plugin.getLogger().warning("Fish " + fish.getId() + " has minLen > maxLen! Swapping values.");
+            double temp = minLen;
+            minLen = maxLen;
+            maxLen = temp;
+        }
+
+        // Wylosuj długość ryby
         double dlugosc = minLen + (maxLen - minLen) * random.nextDouble();
+
+        // Final validation - ensure length is positive and not NaN
+        if (Double.isNaN(dlugosc) || dlugosc <= 0) {
+            plugin.getLogger().severe("Generated invalid fish length: " + dlugosc + " for fish " + fish.getId());
+            dlugosc = (minLen + maxLen) / 2.0; // Use average as fallback
+        }
 
         // Stwórz ItemStack ryby
         ItemStack fishItem = stworzRybeItem(fish, dlugosc);
@@ -106,12 +138,20 @@ public class FishingListener implements Listener {
         // Dodaj rybę do ekwipunku
         player.getInventory().addItem(fishItem);
 
-        // Zapisz statystyki złowienia ryby
-        var playerData = plugin.getPlayerDataManager().getPlayerData(player.getUniqueId());
-        playerData.recordFishCatch(fish.getId(), dlugosc);
+        // VALIDATION: Zapisz statystyki złowienia ryby
+        if (plugin.getPlayerDataManager() != null) {
+            var playerData = plugin.getPlayerDataManager().getPlayerData(player.getUniqueId());
+            if (playerData != null) {
+                playerData.recordFishCatch(fish.getId(), dlugosc);
+            } else {
+                plugin.getLogger().severe("PlayerData is null for player " + player.getName() + " in FishingListener!");
+            }
+        } else {
+            plugin.getLogger().severe("PlayerDataManager is null in FishingListener!");
+        }
 
-        // Dodaj wynik do konkursu (jeśli aktywny)
-        if (plugin.getContestManager().czyJestAktywnyKonkurs()) {
+        // VALIDATION: Dodaj wynik do konkursu (jeśli aktywny)
+        if (plugin.getContestManager() != null && plugin.getContestManager().czyJestAktywnyKonkurs()) {
             plugin.getContestManager().dodajWynik(player.getUniqueId(), dlugosc);
         }
 
