@@ -151,7 +151,8 @@ public class RodManager {
         // Zapisz przynętę do PDC
         meta.getPersistentDataContainer().set(baitIdKey, PersistentDataType.STRING, bait.getId());
         meta.getPersistentDataContainer().set(baitTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
-        meta.getPersistentDataContainer().set(baitDurationKey, PersistentDataType.INTEGER, bait.getCzasTrwania());
+        // Domyślny czas trwania przynęty: 300 sekund (5 minut)
+        meta.getPersistentDataContainer().set(baitDurationKey, PersistentDataType.INTEGER, 300);
 
         // Aktualizuj lore wędki
         aktualizujLoreWedki(meta);
@@ -284,7 +285,7 @@ public class RodManager {
         if (meta == null) return item;
 
         // Ustaw nazwę z kolorem tieru
-        meta.setDisplayName(rod.getTier().getKolor() + ChatColor.BOLD + rod.getNazwa());
+        meta.setDisplayName(rod.getTier().getKolor().toString() + ChatColor.BOLD + rod.getNazwa());
 
         // Dodaj lore
         List<String> lore = new ArrayList<>();
@@ -326,7 +327,7 @@ public class RodManager {
         meta.getPersistentDataContainer().set(idKey, PersistentDataType.STRING, nowaDefinicja.getId());
 
         // Aktualizuj display name z nowym kolorem
-        meta.setDisplayName(nowyTier.getKolor() + ChatColor.BOLD + nowaDefinicja.getNazwa());
+        meta.setDisplayName(nowyTier.getKolor().toString() + ChatColor.BOLD + nowaDefinicja.getNazwa());
 
         // Aktualizuj lore
         List<String> lore = new ArrayList<>();
