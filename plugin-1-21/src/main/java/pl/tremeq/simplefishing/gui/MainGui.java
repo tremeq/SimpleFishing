@@ -119,8 +119,10 @@ public class MainGui extends SimpleFishingGui {
 
         switch (slot) {
             case 10: // Kolekcja ryb
-                player.sendMessage(koloruj("&aOtwieranie kolekcji ryb..."));
-                // Tutaj otwórz GUI kolekcji
+                player.closeInventory();
+                FishCollectionGui fishCollectionGui = new FishCollectionGui(player, plugin);
+                fishCollectionGui.inicjalizuj();
+                player.openInventory(fishCollectionGui.getInventory());
                 break;
 
             case 12: // Sklep
