@@ -122,7 +122,7 @@ public class MainGui extends SimpleFishingGui {
                 player.closeInventory();
                 FishCollectionGui fishCollectionGui = new FishCollectionGui(player, plugin);
                 fishCollectionGui.inicjalizuj();
-                player.openInventory(fishCollectionGui.getInventory());
+                plugin.getGuiManager().otworzGui(player, fishCollectionGui);
                 break;
 
             case 12: // Sklep
