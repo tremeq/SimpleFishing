@@ -1,7 +1,13 @@
 package pl.tremeq.simplefishing.api.rod;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 import pl.tremeq.simplefishing.api.bait.Bait;
 
 import java.util.*;
@@ -17,9 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RodManager {
 
     private final Map<String, FishingRod> wedki;
+    private final Plugin plugin;
 
-    public RodManager() {
+    public RodManager(Plugin plugin) {
         this.wedki = new ConcurrentHashMap<>();
+        this.plugin = plugin;
     }
 
     /**
@@ -88,13 +96,129 @@ public class RodManager {
     }
 
     /**
+     * Aplikuje przynętę na wędkę (zapisuje do PDC i aktualizuje lore)
+     * @param rodItem ItemStack wędki
+     * @param bait Przynęta do aplikacji
+     * @return true jeśli udało się aplikować
+     */
+    public boolean aplikujPrzynete(ItemStack rodItem, Bait bait) {
+        if (rodItem == null || !rodItem.hasItemMeta()) return false;
+
+        ItemMeta meta = rodItem.getItemMeta();
+        if (meta == null) return false;
+
+        // Klucze PDC
+        NamespacedKey baitIdKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_id");
+        NamespacedKey baitTimeKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_time");
+        NamespacedKey baitDurationKey = new NamespacedKey(plugin, "bait_" + bait.getId() + "_duration");
+
+        // Sprawdź czy przynęta już istnieje na wędce
+        if (meta.getPersistentDataContainer().has(baitIdKey)) {
+            return false; // Już ma tę przynętę
+        }
+
+        // Zapisz przynętę do PDC
+        meta.getPersistentDataContainer().set(baitIdKey, PersistentDataType.STRING, bait.getId());
+        meta.getPersistentDataContainer().set(baitTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
+        meta.getPersistentDataContainer().set(baitDurationKey, PersistentDataType.INTEGER, bait.getCzasTrwania());
+
+        // Aktualizuj lore wędki
+        aktualizujLoreWedki(meta);
+
+        rodItem.setItemMeta(meta);
+        return true;
+    }
+
+    /**
+     * Aktualizuje lore wędki aby pokazać aktywne przynęty
+     * @param meta ItemMeta wędki
+     */
+    private void aktualizujLoreWedki(ItemMeta meta) {
+        List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+
+        // Usuń stare informacje o przynętach (zaczynające się od "§d🎣")
+        lore.removeIf(line -> line.startsWith(ChatColor.LIGHT_PURPLE + "🎣") ||
+                              line.startsWith(ChatColor.LIGHT_PURPLE + "Przynęty:") ||
+                              line.startsWith(ChatColor.GRAY + "  • "));
+
+        // Dodaj separator jeśli lore nie jest puste
+        if (!lore.isEmpty() && !lore.get(lore.size() - 1).isEmpty()) {
+            lore.add("");
+        }
+
+        // Pobierz aktywne przynęty
+        List<String> aktywnePrzynety = getAktywnePrzynety(meta);
+
+        if (!aktywnePrzynety.isEmpty()) {
+            lore.add(ChatColor.LIGHT_PURPLE + "🎣 Aktywne Przynęty:");
+            lore.addAll(aktywnePrzynety);
+        }
+
+        meta.setLore(lore);
+    }
+
+    /**
+     * Pobiera aktywne przynęty z meta (wewnętrzna metoda)
+     * @param meta ItemMeta wędki
+     * @return Lista opisów przynęt
+     */
+    private List<String> getAktywnePrzynety(ItemMeta meta) {
+        List<String> baits = new ArrayList<>();
+
+        if (meta == null) return baits;
+
+        var container = meta.getPersistentDataContainer();
+        long currentTime = System.currentTimeMillis();
+
+        // Przejdź przez wszystkie klucze i znajdź przynęty
+        for (NamespacedKey key : container.getKeys()) {
+            if (!key.getKey().startsWith("bait_") || !key.getKey().endsWith("_id")) continue;
+
+            String baitId = container.get(key, PersistentDataType.STRING);
+            if (baitId == null) continue;
+
+            // Pobierz czas aplikacji i czas trwania
+            NamespacedKey timeKey = new NamespacedKey(plugin, "bait_" + baitId + "_time");
+            NamespacedKey durationKey = new NamespacedKey(plugin, "bait_" + baitId + "_duration");
+
+            Long applicationTime = container.get(timeKey, PersistentDataType.LONG);
+            Integer duration = container.get(durationKey, PersistentDataType.INTEGER);
+
+            if (applicationTime == null || duration == null) continue;
+
+            // Oblicz pozostały czas
+            long elapsedSeconds = (currentTime - applicationTime) / 1000;
+            long remainingSeconds = duration - elapsedSeconds;
+
+            if (remainingSeconds > 0) {
+                // Przynęta nadal aktywna
+                String baitName = baitId; // Można by pobrać nazwę z registry
+                baits.add(ChatColor.GRAY + "  • " + ChatColor.AQUA + baitName +
+                         ChatColor.GRAY + " (" + ChatColor.GREEN + remainingSeconds + "s" + ChatColor.GRAY + ")");
+            } else {
+                // Przynęta wygasła - można by ją usunąć, ale zostawiamy to do czyszczenia
+            }
+        }
+
+        return baits;
+    }
+
+    /**
      * Pobiera aktywne przynęty na wędce
      * @param rodItem ItemStack wędki
      * @return Lista aktywnych przynęt
      */
     public List<String> getAktywnePrzynety(ItemStack rodItem) {
-        // Odczyt NBT - będzie w module 1.21
-        return new ArrayList<>();
+        if (rodItem == null || !rodItem.hasItemMeta()) {
+            return new ArrayList<>();
+        }
+
+        ItemMeta meta = rodItem.getItemMeta();
+        if (meta == null) {
+            return new ArrayList<>();
+        }
+
+        return getAktywnePrzynety(meta);
     }
 
     /**
