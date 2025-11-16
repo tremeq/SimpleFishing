@@ -77,11 +77,31 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
         // Integracje z innymi pluginami
         setupIntegracje();
 
+        // Auto-save danych graczy co 5 minut
+        setupAutoSave();
+
         getLogger().info("SimpleFishing został włączony pomyślnie!");
     }
 
     @Override
     public void onDisable() {
+        // Zapisz wszystkie dane graczy przed wyłączeniem
+        if (playerDataManager != null && playerDataFileManager != null) {
+            getLogger().info("Zapisywanie danych wszystkich graczy...");
+            int savedCount = 0;
+
+            for (var entry : playerDataManager.getAllCachedData().entrySet()) {
+                try {
+                    playerDataFileManager.savePlayerData(entry.getValue());
+                    savedCount++;
+                } catch (Exception e) {
+                    getLogger().severe("Błąd podczas zapisywania danych gracza " + entry.getKey() + ": " + e.getMessage());
+                }
+            }
+
+            getLogger().info("Zapisano dane " + savedCount + " graczy.");
+        }
+
         // Zamknięcie wszystkich GUI
         if (guiManager != null) {
             guiManager.zamknijWszystkie();
@@ -160,6 +180,35 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
         } else {
             getLogger().warning("Citizens nie zostało znalezione!");
         }
+    }
+
+    /**
+     * Konfiguruje auto-save danych graczy
+     * Zapisuje dane wszystkich online graczy co 5 minut
+     */
+    private void setupAutoSave() {
+        // Auto-save co 5 minut (6000 ticków)
+        long intervalTicks = 6000L;
+
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            if (playerDataManager == null || playerDataFileManager == null) {
+                return;
+            }
+
+            int savedCount = 0;
+            for (var entry : playerDataManager.getAllCachedData().entrySet()) {
+                try {
+                    playerDataFileManager.savePlayerData(entry.getValue());
+                    savedCount++;
+                } catch (Exception e) {
+                    getLogger().warning("Auto-save: Błąd podczas zapisywania danych gracza " + entry.getKey() + ": " + e.getMessage());
+                }
+            }
+
+            if (savedCount > 0) {
+                getLogger().info("Auto-save: Zapisano dane " + savedCount + " graczy.");
+            }
+        }, intervalTicks, intervalTicks);
     }
 
     /**
