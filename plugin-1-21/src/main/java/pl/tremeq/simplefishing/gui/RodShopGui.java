@@ -8,7 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pl.tremeq.simplefishing.SimpleFishingPlugin;
-import pl.tremeq.simplefishing.api.gui.Gui;
+import pl.tremeq.simplefishing.api.gui.SimpleFishingGui;
 import pl.tremeq.simplefishing.api.rod.FishingRod;
 import pl.tremeq.simplefishing.api.rod.RodTier;
 
@@ -20,23 +20,19 @@ import java.util.List;
  * GUI sklepu z wędkami
  * Pozwala graczom kupić podstawowe wędki (COMMON tier)
  */
-public class RodShopGui implements Gui {
+public class RodShopGui extends SimpleFishingGui {
 
     private final SimpleFishingPlugin plugin;
-    private final Player player;
-    private Inventory inv;
 
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
 
-    public RodShopGui(SimpleFishingPlugin plugin, Player player) {
+    public RodShopGui(Player player, SimpleFishingPlugin plugin) {
+        super(player, ChatColor.DARK_GREEN + "⚒ Sklep z Wędkami", 27);
         this.plugin = plugin;
-        this.player = player;
     }
 
     @Override
-    public void buduj() {
-        inv = plugin.getServer().createInventory(null, 27,
-            ChatColor.DARK_GREEN + "⚒ Sklep z Wędkami");
+    public void inicjalizuj() {
 
         // Dekoracje
         ItemStack filler = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
@@ -47,7 +43,7 @@ public class RodShopGui implements Gui {
         }
 
         for (int i = 0; i < 27; i++) {
-            inv.setItem(i, filler);
+            inventory.setItem(i, filler);
         }
 
         // Pobierz tylko COMMON wędki do sprzedaży
@@ -61,7 +57,7 @@ public class RodShopGui implements Gui {
             if (slotIndex >= rodSlots.length) break;
 
             ItemStack rodDisplay = stworzWyswietlaczeWedki(rod);
-            inv.setItem(rodSlots[slotIndex], rodDisplay);
+            inventory.setItem(rodSlots[slotIndex], rodDisplay);
             slotIndex++;
         }
 
@@ -75,7 +71,7 @@ public class RodShopGui implements Gui {
             backMeta.setLore(backLore);
             backButton.setItemMeta(backMeta);
         }
-        inv.setItem(22, backButton);
+        inventory.setItem(22, backButton);
     }
 
     /**
@@ -122,13 +118,6 @@ public class RodShopGui implements Gui {
     }
 
     @Override
-    public void otworz() {
-        buduj();
-        player.openInventory(inv);
-        plugin.getGuiManager().zarejestrujGui(player, this);
-    }
-
-    @Override
     public void obsluzKlikniecie(InventoryClickEvent event) {
         event.setCancelled(true);
 
@@ -137,7 +126,10 @@ public class RodShopGui implements Gui {
 
         // Przycisk powrotu
         if (event.getSlot() == 22 && clicked.getType() == Material.ARROW) {
-            new MainGui(plugin, player).otworz();
+            player.closeInventory();
+            MainGui mainGui = new MainGui(player, plugin);
+            mainGui.inicjalizuj();
+            plugin.getGuiManager().otworzGui(player, mainGui);
             return;
         }
 
@@ -220,11 +212,6 @@ public class RodShopGui implements Gui {
         player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.2f);
 
         // Odśwież GUI
-        buduj();
-    }
-
-    @Override
-    public Inventory getInv() {
-        return inv;
+        odswiez();
     }
 }

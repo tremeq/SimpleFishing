@@ -66,11 +66,12 @@ public class ConfigManager {
         zaladujSzanseRzadkosci();
         zaladujSzansePrzedmiotow();
 
-        // Załaduj ryby, baity, przedmioty, wędki
+        // Załaduj ryby, baity, przedmioty
         zaladujRyby();
         zaladujBaity();
         zaladujPrzedmioty();
-        zaladujWedki();
+        // Wędki są teraz ładowane automatycznie przez RodRegistry.zaladujDomyslneWedki()
+        // zaladujWedki();
 
         plugin.getLogger().info("Konfiguracja załadowana!");
     }
@@ -406,7 +407,9 @@ public class ConfigManager {
 
     /**
      * Ładuje wędki z konfiguracji
+     * @deprecated Wędki są teraz ładowane automatycznie przez RodRegistry z nowego systemu tierów
      */
+    @Deprecated
     private void zaladujWedki() {
         if (rodConfig == null) return;
 
