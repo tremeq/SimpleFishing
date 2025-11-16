@@ -25,17 +25,15 @@ import java.util.List;
 public class FishCollectionGui extends SimpleFishingGui {
 
     private final SimpleFishingPlugin plugin;
-    private final Player player;
     private int currentPage;
     private List<Fish> allFish;
 
     private static final int FISH_SLOTS_PER_PAGE = 36; // 4 rzędy × 9 slotów
     private static final int GUI_SIZE = 54; // 6 rzędów
 
-    public FishCollectionGui(SimpleFishingPlugin plugin, Player player) {
-        super(plugin.getConfig().getString("gui.tytuly.kolekcja", "&6&lKolekcja Ryb"), GUI_SIZE);
+    public FishCollectionGui(Player player, SimpleFishingPlugin plugin) {
+        super(player, plugin.getConfig().getString("gui.tytuly.kolekcja", "&6&lKolekcja Ryb"), GUI_SIZE);
         this.plugin = plugin;
-        this.player = player;
         this.currentPage = 0;
 
         // Pobierz wszystkie ryby i posortuj po rzadkości
@@ -44,7 +42,7 @@ public class FishCollectionGui extends SimpleFishingGui {
     }
 
     @Override
-    protected void inicjalizujGui() {
+    public void inicjalizuj() {
         // Nagłówek (rząd 1)
         wypelnijNaglowek();
 
@@ -260,7 +258,7 @@ public class FishCollectionGui extends SimpleFishingGui {
     }
 
     @Override
-    public void handleClick(InventoryClickEvent event) {
+    public void obsluzKlikniecie(InventoryClickEvent event) {
         event.setCancelled(true);
 
         int slot = event.getSlot();
@@ -268,33 +266,27 @@ public class FishCollectionGui extends SimpleFishingGui {
         // Poprzednia strona
         if (slot == 45 && currentPage > 0) {
             currentPage--;
-            odswiezGui();
+            odswiez();
             return;
         }
 
         // Następna strona
         if (slot == 53 && currentPage < getMaxPage()) {
             currentPage++;
-            odswiezGui();
+            odswiez();
             return;
         }
 
         // Powrót do menu głównego
         if (slot == 49) {
             player.closeInventory();
-            new MainGui(plugin, player).otworz(player);
+            MainGui mainGui = new MainGui(player, plugin);
+            mainGui.inicjalizuj();
+            player.openInventory(mainGui.getInventory());
             return;
         }
 
         // Kliknięcie w rybę - nic nie rób (tylko podgląd)
-    }
-
-    /**
-     * Odświeża GUI (po zmianie strony)
-     */
-    private void odswiezGui() {
-        inventory.clear();
-        inicjalizujGui();
     }
 
     /**
