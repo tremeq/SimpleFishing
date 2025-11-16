@@ -127,22 +127,28 @@ public class MainGui extends SimpleFishingGui {
 
             case 12: // Sklep
                 if (player.hasPermission("simplefishing.shop")) {
-                    player.sendMessage(koloruj("&aOtwieranie sklepu..."));
-                    // Tutaj otwórz GUI sklepu
+                    player.closeInventory();
+                    ShopGui shopGui = new ShopGui(player, plugin);
+                    shopGui.inicjalizuj();
+                    plugin.getGuiManager().otworzGui(player, shopGui);
                 }
                 break;
 
             case 14: // Konkursy
                 if (player.hasPermission("simplefishing.contest")) {
-                    player.sendMessage(koloruj("&aOtwieranie konkursów..."));
-                    // Tutaj otwórz GUI konkursów
+                    player.closeInventory();
+                    ContestGui contestGui = new ContestGui(player, plugin);
+                    contestGui.inicjalizuj();
+                    plugin.getGuiManager().otworzGui(player, contestGui);
                 }
                 break;
 
             case 16: // Wędki
                 if (player.hasPermission("simplefishing.rod.upgrade")) {
-                    player.sendMessage(koloruj("&aOtwieranie menu wędek..."));
-                    // Tutaj otwórz GUI wędek
+                    player.closeInventory();
+                    RodGui rodGui = new RodGui(player, plugin);
+                    rodGui.inicjalizuj();
+                    plugin.getGuiManager().otworzGui(player, rodGui);
                 }
                 break;
 
