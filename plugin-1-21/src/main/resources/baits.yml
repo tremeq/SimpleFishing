@@ -1,0 +1,109 @@
+# ===========================================
+# SimpleFishing - Konfiguracja Przynęt
+# ===========================================
+#
+# PARAMETRY:
+# - nazwa: Wewnętrzna nazwa przynęty
+# - display_name: Nazwa wyświetlana (z kolorami &)
+# - lore: Lista opisów
+# - material: Typ przedmiotu Minecraft
+# - szansa_bonus: Mnożnik ogólnej szansy (1.2 = +20%, 2.0 = +100%)
+# - bonus_rzadkosci: Bonusy dla konkretnych rzadkości (OPCJONALNE)
+# - preferencje_ryb: Lista ID ryb dla których przynęta daje dodatkowy bonus
+# - bonus_dla_preferencji: Dodatkowy mnożnik dla preferowanych ryb (domyślnie 2.0)
+# - max_uzycia: Ile razy można użyć (-1 = nieskończone)
+# - cena: Cena kupna w sklepie
+#
+# ===========================================
+
+baity:
+  # Podstawowe przynęty
+  robak:
+    nazwa: "Robak"
+    display_name: "&7Robak"
+    lore:
+      - "&7Podstawowa przynęta"
+      - "&7+20% do ogólnej szansy"
+    material: "WHEAT"
+    szansa_bonus: 1.2          # +20% do ogólnej szansy
+    max_uzycia: 10
+    cena: 10.0
+    preferencje_ryb: []
+    # bonus_dla_preferencji: 2.0  # Mnożnik dla preferowanych ryb
+
+  kukurydza:
+    nazwa: "Kukurydza"
+    display_name: "&eKukurydza"
+    lore:
+      - "&7Dobra przynęta na ryby rzeczne"
+      - "&7+30% ogólnie"
+      - "&e+100% dla pstrągów!"
+    material: "WHEAT_SEEDS"
+    szansa_bonus: 1.3            # +30% ogólnie
+    max_uzycia: 15
+    cena: 20.0
+    preferencje_ryb:
+      - "pstrag"                 # Preferuje pstrągi
+    bonus_dla_preferencji: 2.0   # x2 dla pstrągów!
+
+  # Zaawansowane przynęty
+  pelety:
+    nazwa: "Pelety"
+    display_name: "&aPelety"
+    lore:
+      - "&7Wysokiej jakości przynęta"
+      - "&7Zwiększa szansę na większe ryby"
+    material: "COCOA_BEANS"
+    szansa_bonus: 1.5
+    max_uzycia: 20
+    cena: 50.0
+    preferencje_ryb:
+      - "sum"
+      - "pstrag"
+
+  # Przynęty premium
+  boilies:
+    nazwa: "Boilies"
+    display_name: "&9Boilies"
+    lore:
+      - "&7Przynęta premium"
+      - "&7Przyciąga rzadkie ryby"
+      - "&e+100% ogólnie"
+      - "&e+200% dla EPICKICH i LEGENDARNYCH!"
+    material: "SUGAR"
+    szansa_bonus: 2.0            # x2 ogólnie
+    max_uzycia: 10
+    cena: 200.0
+    preferencje_ryb:
+      - "sum"
+      - "szczupak_zloty"
+    bonus_dla_preferencji: 3.0   # x3 dla preferowanych!
+    # Dodatkowe bonusy dla rzadkości
+    bonus_rzadkosci:
+      EPICKI: 2.0                # x2 dla epickich
+      LEGENDARNA: 2.0            # x2 dla legendarnych
+
+  # Przynęty legendarne
+  zlota_przyneta:
+    nazwa: "Złota Przynęta"
+    display_name: "&6Złota Przynęta"
+    lore:
+      - "&7Legendarna przynęta"
+      - "&e+200% ogólnie!"
+      - "&6+500% dla LEGENDARNYCH!"
+      - "&c+1000% dla MITYCZNYCH!"
+      - "&cJednorazowa!"
+    material: "GOLD_NUGGET"
+    szansa_bonus: 3.0              # x3 ogólnie
+    max_uzycia: 1                  # Tylko 1 użycie!
+    cena: 1000.0
+    preferencje_ryb:
+      - "krol_oceanow"
+      - "lewiatian"
+      - "szczupak_zloty"
+      - "zloty_karp"
+    bonus_dla_preferencji: 5.0     # x5 dla preferowanych!
+    # Ogromne bonusy dla rzadkich ryb
+    bonus_rzadkosci:
+      LEGENDARNA: 5.0              # x5 dla legendarnych!
+      MITYCZNA: 10.0               # x10 dla mitycznych!

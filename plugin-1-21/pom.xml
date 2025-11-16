@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pl.tremeq</groupId>
+        <artifactId>SimpleFishing</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>SimpleFishing-Plugin-1-21</artifactId>
+    <packaging>jar</packaging>
+
+    <name>SimpleFishing-Plugin-1-21</name>
+    <description>Implementacja pluginu SimpleFishing dla Minecraft 1.21</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>pl.tremeq</groupId>
+            <artifactId>SimpleFishing-Core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>SimpleFishing-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

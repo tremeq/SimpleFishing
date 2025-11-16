@@ -1,0 +1,209 @@
+# ===========================================
+# SimpleFishing - Konfiguracja Główna
+# Autor: tremeq
+# Wersja: 1.0.0
+# ===========================================
+
+# Ustawienia ogólne
+ustawienia:
+  # Prefix wiadomości pluginu
+  prefix: "&6[SimpleFishing]&r "
+
+  # Czy włączyć debug mode
+  debug: false
+
+  # Język pluginu (pl, en)
+  jezyk: "pl"
+
+# ===========================================
+# SZANSE RZADKOŚCI RYB
+# ===========================================
+# Tutaj możesz dostosować bazowe szanse dla każdej rzadkości
+# Wartości reprezentują WAGĘ (nie procent bezpośredni)
+# Suma wag = 100 oznacza że każda waga to procent
+#
+# Przykład: Jeśli POSPOLITA = 50, a suma = 100, to szansa = 50%
+#
+# WAŻNE: Możesz też nadpisać szansę dla KONKRETNEJ ryby w fish.yml
+# używając parametru "custom_szansa"
+#
+# DOSTOSOWANE DLA DŁUGOTERMINOWEJ ROZGRYWKI - Ryby są trudniejsze do zdobycia!
+# ===========================================
+
+szanse_rzadkosci:
+  # Czy włączyć customowe szanse z tego configu
+  # false = użyj domyślnych wartości z kodu
+  wlaczone: true
+
+  # Szanse dla każdej rzadkości (waga/wartość)
+  # UWAGA: Zmniejszone o 30% dla długoterminowej rozgrywki!
+  BARDZO_POSPOLITA: 50.0    # Było: 75.0 → trudniejsze
+  POSPOLITA: 35.0           # Było: 50.0 → trudniejsze
+  NIEPOSPOLITA: 20.0        # Było: 30.0 → trudniejsze
+  RZADKA: 10.0              # Było: 15.0 → trudniejsze
+  BARDZO_RZADKA: 4.5        # Było: 7.0 → trudniejsze
+  EPICKI: 2.5               # Było: 4.0 → trudniejsze
+  LEGENDARNA: 0.6           # Było: 0.9 → trudniejsze
+  MITYCZNA: 0.05            # Było: 0.1 → trudniejsze
+  BOSKA: 0.005              # Było: 0.01 → ultra rzadka!
+
+  # Mnożniki ceny dla każdej rzadkości
+  # Te wartości mnożą bazową cenę ryby
+  mnozniki_cen:
+    BARDZO_POSPOLITA: 0.5   # x0.5
+    POSPOLITA: 1.0          # x1.0
+    NIEPOSPOLITA: 1.5       # x1.5
+    RZADKA: 2.5             # x2.5
+    BARDZO_RZADKA: 4.0      # x4.0
+    EPICKI: 6.0             # x6.0
+    LEGENDARNA: 12.0        # x12.0
+    MITYCZNA: 30.0          # x30.0
+    BOSKA: 100.0            # x100.0 (ultra wartościowa!)
+
+# ===========================================
+# ALGORYTM BONUSÓW OD SZCZĘŚCIA
+# ===========================================
+# Kontroluje jak modyfikator szczęścia (z wędek/przynęt) wpływa na szanse
+# ===========================================
+
+algorytm_szczescia:
+  # Typ algorytmu:
+  # - "linear" = liniowy (domyślny)
+  # - "exponential" = wykładniczy (silniejszy efekt dla rzadkich)
+  # - "logarithmic" = logarytmiczny (łagodniejszy efekt)
+  typ: "linear"
+
+  # Mnożnik bonusu (im wyższy, tym silniejszy efekt szczęścia)
+  # Domyślnie: 1.0
+  # 2.0 = podwojony efekt szczęścia
+  multiplier: 1.0
+
+  # Czy rzadsze ryby dostają większy bonus?
+  # true = Legendarne/Mityczne dostają więcej bonusu niż Pospolite
+  # false = Wszystkie rzadkości dostają taki sam bonus
+  wiekszy_bonus_dla_rzadkich: true
+
+# ===========================================
+# SZANSE PRZEDMIOTÓW MORSKICH
+# ===========================================
+# Przedmioty mogą wypadać zamiast ryb
+# Dodaje różnorodność i długoterminową rozgrywkę
+# ===========================================
+
+szanse_przedmiotow:
+  # Czy włączyć customowe szanse przedmiotów
+  wlaczone: true
+
+  # Szanse dla każdej rzadkości przedmiotu (waga/wartość)
+  SMIECI: 60.0              # Śmieci - często
+  POSPOLITY: 30.0           # Zwykłe przedmioty morskie
+  NIEPOSPOLITY: 8.0         # Perły, korale
+  RZADKI: 1.5               # Skarby, artefakty
+  LEGENDARNE: 0.4           # Antyczne skarby
+  MITYCZNE: 0.1             # Boskie artefakty
+
+# ===========================================
+# USTAWIENIA DROPÓW
+# ===========================================
+# Kontroluje co może wypadać podczas łowienia
+# ===========================================
+
+drop_system:
+  # Szansa na przedmiot zamiast ryby (0.0 - 1.0)
+  # 0.25 = 25% szans na przedmiot, 75% szans na rybę
+  # Im wyższa wartość, tym więcej przedmiotów
+  szansa_na_przedmiot: 0.25
+
+  # Czy przedmioty mogą wypadać?
+  # false = tylko ryby, true = ryby + przedmioty
+  wlaczone: true
+
+  # Czy wyświetlać wiadomość przy wyłowieniu przedmiotu
+  wiadomosc_po_przedmiocie: true
+
+# Ustawienia łowienia
+lowienie:
+  # Czy zastąpić domyślne łowienie customowymi rybami
+  zastap_domyslne: true
+
+  # Mnożnik czasu łowienia (1.0 = normalnie, 0.5 = 2x szybciej)
+  mnoznik_czasu: 1.0
+
+  # Czy wyświetlać wiadomość przy złowieniu ryby
+  wiadomosc_po_zlowieniu: true
+
+# Ustawienia sklepu
+sklep:
+  # Czy włączyć sklep
+  wlaczony: true
+
+  # Mnożnik cen (1.0 = normalne ceny, 1.5 = +50% do cen)
+  mnoznik_cen: 1.0
+
+  # Cooldown między transakcjami (ms)
+  cooldown: 500
+
+  # Czy wymagać Vault do działania sklepu
+  wymaga_vault: true
+
+# Ustawienia konkursów
+konkursy:
+  # Czy włączyć system konkursów
+  wlaczone: true
+
+  # Maksymalna liczba jednoczesnych konkursów
+  max_jednoczesnych: 1
+
+  # Czy automatycznie nagradzać zwycięzców
+  auto_nagrody: true
+
+  # Czy wysyłać powiadomienia o konkursach
+  powiadomienia: true
+
+# Ustawienia wędek
+wedki:
+  # Czy włączyć customowe wędki
+  wlaczone: true
+
+  # Czy zużywać przynęty
+  zuzywaj_przynety: true
+
+  # Czy wędki mogą się zużywać
+  wytrzymalosc: true
+
+# Ustawienia GUI
+gui:
+  # Tytuły GUI (można personalizować)
+  tytuly:
+    glowne: "&6&lSimpleFishing - Menu Główne"
+    kolekcja: "&6&lKolekcja Ryb"
+    sklep: "&a&lSklep Ryb"
+    konkursy: "&b&lKonkursy"
+    wedki: "&d&lWędki"
+
+# Integracje
+integracje:
+  # PlaceholderAPI
+  placeholderapi:
+    wlaczone: true
+
+  # Citizens
+  citizens:
+    wlaczone: true
+    # Metadata name dla NPC SimpleFishing
+    metadata: "simplefishing"
+
+  # Vault
+  vault:
+    wlaczone: true
+
+# Statystyki
+statystyki:
+  # Czy zbierać statystyki graczy
+  wlaczone: true
+
+  # Co zapisywać
+  zapisuj:
+    zlowione_ryby: true
+    sprzedane_ryby: true
+    wygrane_konkursy: true

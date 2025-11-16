@@ -1,0 +1,361 @@
+# ===========================================
+# SimpleFishing - Przedmioty do Wyłowienia
+# Autor: tremeq
+# Wersja: 1.0.0
+# ===========================================
+#
+# Oprócz ryb, gracze mogą wyłowić różne przedmioty morskie
+# System przedmiotów dodaje długoterminową rozgrywkę i różnorodność
+#
+# Struktura przedmiotu:
+# id:
+#   nazwa: "Nazwa przedmiotu"
+#   material: BUKKIT_MATERIAL
+#   rzadkosc: RZADKOSC (SMIECI, POSPOLITY, NIEPOSPOLITY, RZADKI, LEGENDARNE, MITYCZNE)
+#   opis:
+#     - "Linia 1"
+#     - "Linia 2"
+#   wartosc_sprzedazy: 0.0 (ile można sprzedać)
+#   custom_szansa: 10.0 (opcjonalne - nadpisuje szansę z rzadkości)
+#   custom_model_data: 0 (opcjonalne - dla resource packów)
+#   enchantmenty: (opcjonalne)
+#     - "ENCHANT:POZIOM"
+# ===========================================
+
+# ===========================================
+# ŚMIECI (60% szans bazowych)
+# ===========================================
+
+stara_butelka:
+  nazwa: "&8Stara Butelka"
+  material: GLASS_BOTTLE
+  rzadkosc: SMIECI
+  opis:
+    - "&7Zaśmiecona butelka wyłowiona z morza"
+    - "&7Można ją sprzedać za grosze"
+  wartosc_sprzedazy: 0.5
+
+zepsute_buty:
+  nazwa: "&8Zepsute Buty"
+  material: LEATHER_BOOTS
+  rzadkosc: SMIECI
+  opis:
+    - "&7Ktoś zgubił swoje buty w oceanie"
+    - "&7Całkowicie zniszczone"
+  wartosc_sprzedazy: 1.0
+
+zgniła_skora:
+  nazwa: "&8Zgniła Skóra"
+  material: ROTTEN_FLESH
+  rzadkosc: SMIECI
+  opis:
+    - "&7Kawałek zgniłego mięsa"
+    - "&7Nie nadaje się do jedzenia"
+  wartosc_sprzedazy: 0.3
+
+stary_kij:
+  nazwa: "&8Stary Kij"
+  material: STICK
+  rzadkosc: SMIECI
+  opis:
+    - "&7Zmoczony kij drewna"
+    - "&7Prawie się rozpada"
+  wartosc_sprzedazy: 0.2
+
+zardzewialy_haczyk:
+  nazwa: "&8Zardzewiały Haczyk"
+  material: TRIPWIRE_HOOK
+  rzadkosc: SMIECI
+  opis:
+    - "&7Stary, zardzewiały haczyk wędkarski"
+    - "&7Już się nie nadaje do użytku"
+  wartosc_sprzedazy: 2.0
+
+# ===========================================
+# POSPOLITE (30% szans bazowych)
+# ===========================================
+
+muszla:
+  nazwa: "&fMuszla"
+  material: NAUTILUS_SHELL
+  rzadkosc: POSPOLITY
+  opis:
+    - "&7Zwykła muszla morska"
+    - "&7Można ją sprzedać kolekcjonerom"
+  wartosc_sprzedazy: 5.0
+
+wodorosty:
+  nazwa: "&fWodorosty Morskie"
+  material: KELP
+  rzadkosc: POSPOLITY
+  opis:
+    - "&7Świeże wodorosty z oceanu"
+    - "&7Używane w kuchni lub jako nawóz"
+  wartosc_sprzedazy: 3.0
+
+piasek_morski:
+  nazwa: "&fPiasek Morski"
+  material: SAND
+  rzadkosc: POSPOLITY
+  opis:
+    - "&7Drobny piasek z dna morza"
+    - "&7Idealny do budowy"
+  wartosc_sprzedazy: 1.5
+
+kamyk_morski:
+  nazwa: "&fKamyk Morski"
+  material: COBBLESTONE
+  rzadkosc: POSPOLITY
+  opis:
+    - "&7Gładki kamyk wyszlifowany przez fale"
+    - "&7Ładnie wygląda w kolekcji"
+  wartosc_sprzedazy: 2.0
+
+rozgwiazda:
+  nazwa: "&fRozgwiazda"
+  material: ORANGE_DYE
+  rzadkosc: POSPOLITY
+  custom_model_data: 1001
+  opis:
+    - "&7Kolorowa rozgwiazda morska"
+    - "&7Żywa i zdrowa"
+  wartosc_sprzedazy: 8.0
+
+# ===========================================
+# NIEPOSPOLITE (8% szans bazowych)
+# ===========================================
+
+perla:
+  nazwa: "&aMała Perła"
+  material: ENDER_PEARL
+  rzadkosc: NIEPOSPOLITY
+  opis:
+    - "&7Mała perła znaleziona w muszli"
+    - "&aCeniona przez jubilerów"
+  wartosc_sprzedazy: 25.0
+
+koral:
+  nazwa: "&aKoral"
+  material: TUBE_CORAL
+  rzadkosc: NIEPOSPOLITY
+  opis:
+    - "&7Piękny koralowiec"
+    - "&aDekoracyjny i wartościowy"
+  wartosc_sprzedazy: 18.0
+
+bursztyn:
+  nazwa: "&aBursztyn Morski"
+  material: ORANGE_STAINED_GLASS
+  rzadkosc: NIEPOSPOLITY
+  opis:
+    - "&7Kawałek bursztynu z morza"
+    - "&7Zawiera małe inkluzje"
+    - "&aCenny dla kolekcjonerów"
+  wartosc_sprzedazy: 30.0
+
+meduz:
+  nazwa: "&aMeduza w Słoiku"
+  material: POTION
+  rzadkosc: NIEPOSPOLITY
+  opis:
+    - "&7Świecąca meduza zamknięta w słoiku"
+    - "&aŚwieci w ciemności!"
+  wartosc_sprzedazy: 22.0
+  enchantmenty:
+    - "LUCK:1"
+
+szklana_kula:
+  nazwa: "&aSzklana Kula Rybaka"
+  material: GLASS
+  rzadkosc: NIEPOSPOLITY
+  opis:
+    - "&7Stara szklana kula używana przez rybaków"
+    - "&7Do pływania sieci"
+    - "&aAntyk z oceanu"
+  wartosc_sprzedazy: 35.0
+
+# ===========================================
+# RZADKIE (1.5% szans bazowych)
+# ===========================================
+
+wielka_perla:
+  nazwa: "&9Wielka Perła"
+  material: ENDER_PEARL
+  rzadkosc: RZADKI
+  opis:
+    - "&7Duża, lśniąca perła"
+    - "&9Niezwykle wartościowa!"
+    - "&7Idealna do biżuterii"
+  wartosc_sprzedazy: 100.0
+  enchantmenty:
+    - "LUCK:2"
+
+mapa_skarbu:
+  nazwa: "&9Mapa Skarbu"
+  material: FILLED_MAP
+  rzadkosc: RZADKI
+  opis:
+    - "&7Stara mapa prowadząca do skarbu"
+    - "&9Może prowadzić do fortuny!"
+    - "&7X zaznacza miejsce..."
+  wartosc_sprzedazy: 75.0
+
+zloty_haczyk:
+  nazwa: "&9Złoty Haczyk"
+  material: GOLD_INGOT
+  rzadkosc: RZADKI
+  opis:
+    - "&7Haczyk wykonany ze złota"
+    - "&9Przynosi szczęście w łowieniu!"
+    - "&e+15% szansy na rzadkie ryby"
+  wartosc_sprzedazy: 120.0
+  enchantmenty:
+    - "LUCK:3"
+
+antyczna_moneta:
+  nazwa: "&9Antyczna Moneta"
+  material: GOLD_NUGGET
+  rzadkosc: RZADKI
+  opis:
+    - "&7Moneta z zatopionego statku"
+    - "&7Pokryta algami i solą"
+    - "&9Bezcenne dla historyków"
+  wartosc_sprzedazy: 85.0
+
+kompas_kapitana:
+  nazwa: "&9Kompas Kapitana"
+  material: COMPASS
+  rzadkosc: RZADKI
+  opis:
+    - "&7Kompas należący do słynnego kapitana"
+    - "&9Zawsze wskazuje skarb"
+    - "&7Magiczny przedmiot"
+  wartosc_sprzedazy: 95.0
+  enchantmenty:
+    - "UNBREAKING:3"
+
+# ===========================================
+# LEGENDARNE (0.4% szans bazowych)
+# ===========================================
+
+diamentowa_perla:
+  nazwa: "&6Diamentowa Perła"
+  material: DIAMOND
+  rzadkosc: LEGENDARNE
+  opis:
+    - "&7Perła ze skamieniałym diamentem w środku"
+    - "&6NIEZWYKLE RZADKA!"
+    - "&eJeden z najcenniejszych skarbów morza"
+    - ""
+    - "&7Wartość: &eNieoszacowana"
+  wartosc_sprzedazy: 500.0
+  enchantmenty:
+    - "LUCK:5"
+    - "FORTUNE:3"
+
+korona_atlantydy:
+  nazwa: "&6Korona Atlantydy"
+  material: GOLDEN_HELMET
+  rzadkosc: LEGENDARNE
+  opis:
+    - "&7Korona z zatopionych ruin Atlantydy"
+    - "&6Moc starożytnych morskich królów"
+    - "&bDaje moc oddychania pod wodą"
+    - "&9+50% szansy na mityczne ryby"
+  wartosc_sprzedazy: 1000.0
+  enchantmenty:
+    - "RESPIRATION:5"
+    - "AQUA_AFFINITY:1"
+    - "UNBREAKING:10"
+
+trydent_posejdona:
+  nazwa: "&6Trydent Posejdona"
+  material: TRIDENT
+  rzadkosc: LEGENDARNE
+  opis:
+    - "&7Trydent należący do samego Posejdona"
+    - "&6Kontroluje oceany"
+    - "&bMożesz władać morzami!"
+    - ""
+    - "&9Niezniszczalny"
+  wartosc_sprzedazy: 2000.0
+  enchantmenty:
+    - "LOYALTY:10"
+    - "RIPTIDE:5"
+    - "IMPALING:10"
+    - "UNBREAKING:10"
+
+serce_oceanu:
+  nazwa: "&6Serce Oceanu"
+  material: HEART_OF_THE_SEA
+  rzadkosc: LEGENDARNE
+  opis:
+    - "&7Pulsujące serce samego oceanu"
+    - "&6Źródło całej morskiej magii"
+    - "&bDaje nieograniczoną moc pod wodą"
+    - ""
+    - "&d&lMITYCZNA MOC"
+  wartosc_sprzedazy: 1500.0
+  enchantmenty:
+    - "LUCK:10"
+
+# ===========================================
+# MITYCZNE (0.1% szans bazowych)
+# ===========================================
+
+krysztal_morskich_bogow:
+  nazwa: "&d&lKryształ Morskich Bogów"
+  material: NETHER_STAR
+  rzadkosc: MITYCZNE
+  opis:
+    - "&7Kryształ stworzony przez bogów oceanu"
+    - "&d&lNAJRZADSZY PRZEDMIOT!"
+    - ""
+    - "&6Efekty:"
+    - "&e • Nieśmiertelność pod wodą"
+    - "&e • Widzenie w oceanie"
+    - "&e • Kontrola nad istotami morskimi"
+    - "&e • +100% szansy na boskie ryby"
+    - ""
+    - "&7Tylko &d&l1 na 10,000&7 rybaków"
+    - "&7kiedykolwiek go znajdzie..."
+  wartosc_sprzedazy: 10000.0
+  enchantmenty:
+    - "LUCK:20"
+    - "FORTUNE:10"
+    - "UNBREAKING:20"
+
+atlantis_artefakt:
+  nazwa: "&d&lArtefakt Atlantydy"
+  material: TOTEM_OF_UNDYING
+  rzadkosc: MITYCZNE
+  opis:
+    - "&7Starożytny artefakt z zaginionej Atlantydy"
+    - "&d&lBOSKA MOC"
+    - ""
+    - "&6Legenda mówi że:"
+    - "&7Kto go znajdzie, odnajdzie Atlantydę"
+    - ""
+    - "&9Może przywrócić życie utonięciom"
+    - "&9Daje moc budowy pod wodą"
+    - ""
+    - "&cNie można sprzedać"
+  wartosc_sprzedazy: 0.0
+  custom_szansa: 0.05
+  enchantmenty:
+    - "LUCK:25"
+    - "PROTECTION:10"
+
+# ===========================================
+# KONFIGURACJA PRZEDMIOTÓW
+# ===========================================
+#
+# Przedmioty vs Ryby:
+# - Szansa na przedmiot zamiast ryby: 25% (konfigurowalne w config.yml)
+# - Gdy wypadnie przedmiot, losowany jest na podstawie rzadkości
+# - Śmieci są najczęstsze, Mityczne ultra rzadkie
+#
+# Wartości sprzedaży są niższe niż ryb, ale niektóre przedmioty
+# dają bonusy lub mają specjalne efekty
+#
+# ===========================================

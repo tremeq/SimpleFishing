@@ -1,0 +1,78 @@
+# ===========================================
+# SimpleFishing - Wiadomości
+# ===========================================
+
+# Prefix
+prefix: "&6[SimpleFishing]&r "
+
+# Wiadomości ogólne
+ogolne:
+  brak_uprawnien: "&cNie masz uprawnień do tego!"
+  tylko_gracze: "&cTa komenda jest dostępna tylko dla graczy!"
+  przeladowano: "&aKonfiguracja została przeładowana!"
+  nieznana_komenda: "&cNieznana komenda! Użyj &e/sf help"
+
+# Wiadomości łowienia
+lowienie:
+  zlowiles: "&aZłowiłeś %fish% &a(%length% cm)!"
+  zlowiles_z_efektami: "&aZłowiłeś %fish% &a(%length% cm) i otrzymałeś efekty!"
+  rzadka_ryba: "&6&lGratulacje! Złowiłeś rzadką rybę: %fish%!"
+
+# Wiadomości sklepu
+sklep:
+  sprzedano: "&aSprzedano %fish% za &e%cena% monet!"
+  sprzedano_wszystkie: "&aSprzedano %liczba% ryb za &e%cena% monet!"
+  brak_ryb: "&cNie masz ryb do sprzedania!"
+  transakcja_trwa: "&cTransakcja już trwa, poczekaj!"
+  cooldown: "&cPoczekaj chwilę przed następną sprzedażą!"
+  vault_brak: "&cSystem ekonomii nie jest dostępny!"
+
+# Wiadomości konkursów
+konkursy:
+  rozpoczal_sie: "&e&lRozpoczął się konkurs: %nazwa%!"
+  typ: "&7Typ: &a%typ%"
+  czas_pozostaly: "&7Pozostały czas: &a%czas%"
+  zakonczyl_sie: "&e&lKonkurs %nazwa% się zakończył!"
+  nagroda: "&aOtrzymałeś nagrodę za zajęcie %miejsce% miejsca!"
+  brak_aktywnego: "&cObecnie nie ma aktywnego konkursu!"
+  twoje_miejsce: "&7Twoje miejsce: &a#%miejsce%"
+  twoj_wynik: "&7Twój wynik: &a%wynik%"
+  ranking_naglowek: "&e&lRanking:"
+  ranking_linia: "&a%miejsce%. &f%gracz% &7- &a%wynik%"
+
+# Wiadomości GUI
+gui:
+  otwieranie_kolekcji: "&aOtwieranie kolekcji ryb..."
+  otwieranie_sklepu: "&aOtwieranie sklepu..."
+  otwieranie_konkursow: "&aOtwieranie konkursów..."
+  otwieranie_wedek: "&aOtwieranie menu wędek..."
+
+# Wiadomości wędek
+wedki:
+  nalozono_przynete: "&aNałożono przynętę %bait% na wędkę!"
+  usunieto_przynete: "&aUsunięto przynętę %bait% z wędki!"
+  brak_miejsca: "&cWędka nie ma miejsca na więcej przynęt!"
+  nie_posiadasz: "&cNie posiadasz tej wędki!"
+
+# Wiadomości Citizens
+citizens:
+  kliknij_npc: "&aKliknij prawym przyciskiem myszy w NPC aby otworzyć menu!"
+
+# Pomoc
+pomoc:
+  naglowek: "&e&l=== SimpleFishing - Pomoc ==="
+  komenda_glowna: "&a/sf &7- Otwiera główne GUI"
+  komenda_help: "&a/sf help &7- Pokazuje tę pomoc"
+  komenda_info: "&a/sf info &7- Informacje o pluginie"
+  komenda_shop: "&a/sf shop &7- Otwiera sklep ryb"
+  komenda_contest: "&a/sf contest &7- Informacje o konkursie"
+  komenda_reload: "&a/sf reload &7- Przeładowuje konfigurację &c(Admin)"
+
+# Informacje
+info:
+  naglowek: "&e&l=== SimpleFishing ==="
+  wersja: "&7Wersja: &a%wersja%"
+  autor: "&7Autor: &atremeq"
+  ryby: "&7Zarejestrowanych ryb: &a%liczba%"
+  baity: "&7Zarejestrowanych przynęt: &a%liczba%"
+  aktywny_konkurs: "&7Aktywny konkurs: &a%nazwa%"

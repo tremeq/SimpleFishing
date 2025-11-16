@@ -1,0 +1,611 @@
+# ===========================================
+# SimpleFishing - Konfiguracja Ryb
+# ===========================================
+#
+# PARAMETRY:
+# - nazwa: Wewnętrzna nazwa ryby
+# - display_name: Nazwa wyświetlana (z kolorami &)
+# - lore: Lista opisów (każda linia osobno)
+# - rzadkosc: BARDZO_POSPOLITA, POSPOLITA, NIEPOSPOLITA, RZADKA, BARDZO_RZADKA, EPICKI, LEGENDARNA, MITYCZNA, BOSKA
+# - min_dlugosc: Minimalna długość w cm
+# - max_dlugosc: Maksymalna długość w cm
+# - material: Typ przedmiotu Minecraft (COD, SALMON, TROPICAL_FISH, etc.)
+# - cena: Bazowa cena sprzedaży
+# - custom_model_data: Custom Model Data (0 = brak)
+# - efekty: Lista efektów [TYP:SEKUNDY:POZIOM] (np. "LUCK:30:1")
+# - custom_szansa: OPCJONALNE - Nadpisz szansę dla tej konkretnej ryby
+#
+# ===========================================
+
+ryby:
+  # ========================================
+  # BARDZO POSPOLITE (75% szans)
+  # ========================================
+
+  maly_okuc:
+    nazwa: "Mały Okuc"
+    display_name: "&7Mały Okuć"
+    lore:
+      - "&7Bardzo pospolita mała rybka"
+      - "&7Idealna dla początkujących"
+    rzadkosc: "BARDZO_POSPOLITA"
+    min_dlugosc: 5.0
+    max_dlugosc: 15.0
+    material: "COD"
+    cena: 2.0
+    custom_model_data: 0
+    efekty: []
+
+  ploc:
+    nazwa: "Płoć"
+    display_name: "&7Płoć"
+    lore:
+      - "&7Zwykła rzeczna ryba"
+      - "&7Spotykana wszędzie"
+    rzadkosc: "BARDZO_POSPOLITA"
+    min_dlugosc: 10.0
+    max_dlugosc: 25.0
+    material: "SALMON"
+    cena: 3.0
+    custom_model_data: 0
+    efekty: []
+
+  karas:
+    nazwa: "Karaś"
+    display_name: "&7Karaś"
+    lore:
+      - "&7Pospolita ryba stawowa"
+    rzadkosc: "BARDZO_POSPOLITA"
+    min_dlugosc: 15.0
+    max_dlugosc: 30.0
+    material: "COD"
+    cena: 3.5
+    custom_model_data: 0
+    efekty: []
+
+  # ========================================
+  # POSPOLITE (50% szans)
+  # ========================================
+
+  dorsz:
+    nazwa: "Dorsz"
+    display_name: "&fDorsz"
+    lore:
+      - "&7Pospolita ryba morska"
+      - "&7Często spotykana w oceanach"
+    rzadkosc: "POSPOLITA"
+    min_dlugosc: 20.0
+    max_dlugosc: 60.0
+    material: "COD"
+    cena: 5.0
+    custom_model_data: 0
+    efekty: []
+
+  sledz:
+    nazwa: "Śledź"
+    display_name: "&fŚledź"
+    lore:
+      - "&7Mała, srebrzysta ryba"
+      - "&7Łowiona w dużych ławicach"
+    rzadkosc: "POSPOLITA"
+    min_dlugosc: 15.0
+    max_dlugosc: 30.0
+    material: "SALMON"
+    cena: 4.0
+    custom_model_data: 0
+    efekty: []
+
+  leszcz:
+    nazwa: "Leszcz"
+    display_name: "&fLeszcz"
+    lore:
+      - "&7Ryba o szerokim ciele"
+      - "&7Żyje w rzekach i jeziorach"
+    rzadkosc: "POSPOLITA"
+    min_dlugosc: 25.0
+    max_dlugosc: 50.0
+    material: "COD"
+    cena: 6.0
+    custom_model_data: 0
+    efekty: []
+
+  lin:
+    nazwa: "Lin"
+    display_name: "&fLin"
+    lore:
+      - "&7Zielonkawa ryba rzeczna"
+    rzadkosc: "POSPOLITA"
+    min_dlugosc: 20.0
+    max_dlugosc: 45.0
+    material: "SALMON"
+    cena: 5.5
+    custom_model_data: 0
+    efekty: []
+
+  # ========================================
+  # NIEPOSPOLITE (30% szans)
+  # ========================================
+
+  pstrag:
+    nazwa: "Pstrąg"
+    display_name: "&aPstrąg"
+    lore:
+      - "&7Kolorowa ryba rzeczna"
+      - "&7O delikatnym smaku"
+      - "&aDaje regenerację!"
+    rzadkosc: "NIEPOSPOLITA"
+    min_dlugosc: 25.0
+    max_dlugosc: 50.0
+    material: "TROPICAL_FISH"
+    cena: 15.0
+    custom_model_data: 0
+    efekty:
+      - "REGENERATION:10:1"
+
+  okon:
+    nazwa: "Okoń"
+    display_name: "&aOkoń"
+    lore:
+      - "&7Drapieżna ryba słodkowodna"
+      - "&7Z charakterystycznymi pasami"
+    rzadkosc: "NIEPOSPOLITA"
+    min_dlugosc: 20.0
+    max_dlugosc: 40.0
+    material: "TROPICAL_FISH"
+    cena: 12.0
+    custom_model_data: 0
+    efekty:
+      - "SPEED:15:1"
+
+  amur:
+    nazwa: "Amur"
+    display_name: "&aAmur"
+    lore:
+      - "&7Duża ryba roślinnożerna"
+      - "&7Pochodzi z Azji"
+    rzadkosc: "NIEPOSPOLITA"
+    min_dlugosc: 40.0
+    max_dlugosc: 80.0
+    material: "COD"
+    cena: 18.0
+    custom_model_data: 0
+    efekty:
+      - "SATURATION:20:1"
+
+  sandacz:
+    nazwa: "Sandacz"
+    display_name: "&aSandacz"
+    lore:
+      - "&7Nocny drapieżnik"
+      - "&7Bardzo smaczny"
+    rzadkosc: "NIEPOSPOLITA"
+    min_dlugosc: 30.0
+    max_dlugosc: 70.0
+    material: "COD"
+    cena: 16.0
+    custom_model_data: 0
+    efekty:
+      - "NIGHT_VISION:30:1"
+
+  # ========================================
+  # RZADKIE (15% szans)
+  # ========================================
+
+  szczupak:
+    nazwa: "Szczupak"
+    display_name: "&9Szczupak"
+    lore:
+      - "&7Groźny drapieżnik słodkowodny"
+      - "&7Z ostrymi zębami"
+      - "&9Zwiększa siłę!"
+    rzadkosc: "RZADKA"
+    min_dlugosc: 40.0
+    max_dlugosc: 100.0
+    material: "COD"
+    cena: 35.0
+    custom_model_data: 1
+    efekty:
+      - "STRENGTH:20:1"
+      - "SPEED:20:1"
+
+  sum:
+    nazwa: "Sum"
+    display_name: "&9Sum"
+    lore:
+      - "&7Gigantyczna ryba rzeczna"
+      - "&7Z długimi wąsami"
+      - "&9Prawdziwy potwór!"
+    rzadkosc: "RZADKA"
+    min_dlugosc: 50.0
+    max_dlugosc: 150.0
+    material: "COD"
+    cena: 50.0
+    custom_model_data: 1
+    efekty:
+      - "STRENGTH:25:1"
+      - "RESISTANCE:25:1"
+
+  tuna:
+    nazwa: "Tuńczyk"
+    display_name: "&9Tuńczyk"
+    lore:
+      - "&7Szybka ryba morska"
+      - "&7Potrafi pływać z prędkością 70 km/h"
+    rzadkosc: "RZADKA"
+    min_dlugosc: 60.0
+    max_dlugosc: 120.0
+    material: "SALMON"
+    cena: 45.0
+    custom_model_data: 1
+    efekty:
+      - "SPEED:30:2"
+      - "DOLPHINS_GRACE:30:1"
+
+  pstrag_teczowy:
+    nazwa: "Pstrąg Tęczowy"
+    display_name: "&9Pstrąg Tęczowy"
+    lore:
+      - "&7Piękna kolorowa ryba"
+      - "&7Mieni się wszystkimi kolorami"
+    rzadkosc: "RZADKA"
+    min_dlugosc: 30.0
+    max_dlugosc: 60.0
+    material: "TROPICAL_FISH"
+    cena: 40.0
+    custom_model_data: 1
+    efekty:
+      - "GLOWING:45:1"
+      - "LUCK:30:1"
+
+  # ========================================
+  # BARDZO RZADKIE (7% szans)
+  # ========================================
+
+  miecznik:
+    nazwa: "Miecznik"
+    display_name: "&3Miecznik"
+    lore:
+      - "&7Egzotyczna ryba z długim dziobem"
+      - "&7Niezwykle szybka i zręczna"
+      - "&bDaje niesamowite efekty!"
+    rzadkosc: "BARDZO_RZADKA"
+    min_dlugosc: 80.0
+    max_dlugosc: 180.0
+    material: "TROPICAL_FISH"
+    cena: 80.0
+    custom_model_data: 2
+    efekty:
+      - "SPEED:40:2"
+      - "STRENGTH:30:1"
+      - "JUMP_BOOST:40:2"
+
+  rekin_mlot:
+    nazwa: "Rekin Młot"
+    display_name: "&3Rekin Młot"
+    lore:
+      - "&7Niesamowity morski drapieżnik"
+      - "&7Z charakterystyczną głową"
+      - "&cNiebezpieczny!"
+    rzadkosc: "BARDZO_RZADKA"
+    min_dlugosc: 100.0
+    max_dlugosc: 250.0
+    material: "COD"
+    cena: 100.0
+    custom_model_data: 2
+    efekty:
+      - "STRENGTH:45:2"
+      - "RESISTANCE:45:1"
+      - "WATER_BREATHING:60:1"
+
+  sum_gigant:
+    nazwa: "Sum Gigant"
+    display_name: "&3Sum Gigant"
+    lore:
+      - "&7Legendarny rozmiar suma"
+      - "&7Jeden z największych złowionych"
+      - "&3Ogromna siła!"
+    rzadkosc: "BARDZO_RZADKA"
+    min_dlugosc: 150.0
+    max_dlugosc: 300.0
+    material: "COD"
+    cena: 90.0
+    custom_model_data: 2
+    efekty:
+      - "STRENGTH:50:2"
+      - "RESISTANCE:50:2"
+      - "ABSORPTION:30:1"
+
+  # ========================================
+  # EPICKIE (4% szans)
+  # ========================================
+
+  szczupak_zloty:
+    nazwa: "Złoty Szczupak"
+    display_name: "&5Złoty Szczupak"
+    lore:
+      - "&7Niezwykle rzadki szczupak"
+      - "&7O złotym połysku"
+      - "&eUdziela potężnych efektów!"
+      - "&dTrudny do złowienia!"
+    rzadkosc: "EPICKI"
+    min_dlugosc: 60.0
+    max_dlugosc: 120.0
+    material: "TROPICAL_FISH"
+    cena: 200.0
+    custom_model_data: 3
+    efekty:
+      - "LUCK:45:2"
+      - "SPEED:45:2"
+      - "STRENGTH:45:1"
+
+  smok_morski:
+    nazwa: "Smok Morski"
+    display_name: "&5Smok Morski"
+    lore:
+      - "&7Mityczna ryba podobna do smoka"
+      - "&7Z łuskami jak pancerz"
+      - "&cNiezwykle niebezpieczna!"
+      - "&5Epicka moc!"
+    rzadkosc: "EPICKI"
+    min_dlugosc: 120.0
+    max_dlugosc: 250.0
+    material: "TROPICAL_FISH"
+    cena: 250.0
+    custom_model_data: 3
+    efekty:
+      - "FIRE_RESISTANCE:60:1"
+      - "STRENGTH:50:2"
+      - "RESISTANCE:50:2"
+      - "REGENERATION:45:1"
+
+  karp_koi_cesarski:
+    nazwa: "Karp Koi Cesarski"
+    display_name: "&5Karp Koi Cesarski"
+    lore:
+      - "&7Najrzadszy typ karpia koi"
+      - "&7Hodowany przez cesarzy"
+      - "&eWartość nieoszacowana!"
+    rzadkosc: "EPICKI"
+    min_dlugosc: 40.0
+    max_dlugosc: 90.0
+    material: "TROPICAL_FISH"
+    cena: 180.0
+    custom_model_data: 3
+    efekty:
+      - "LUCK:60:2"
+      - "HERO_OF_THE_VILLAGE:60:1"
+      - "REGENERATION:60:2"
+
+  manta:
+    nazwa: "Manta"
+    display_name: "&5Manta"
+    lore:
+      - "&7Ogromna płaszczka"
+      - "&7Majestatycznie pływa przez ocean"
+      - "&9Gracją jak tancerz!"
+    rzadkosc: "EPICKI"
+    min_dlugosc: 200.0
+    max_dlugosc: 400.0
+    material: "COD"
+    cena: 220.0
+    custom_model_data: 3
+    efekty:
+      - "SLOW_FALLING:120:1"
+      - "LEVITATION:5:1"
+      - "LUCK:45:1"
+
+  # ========================================
+  # LEGENDARNE (0.9% szans)
+  # ========================================
+
+  krol_oceanow:
+    nazwa: "Król Oceanów"
+    display_name: "&6Król Oceanów"
+    lore:
+      - "&7Legendarny władca mórz"
+      - "&7Złowienie go jest wielkim zaszczytem"
+      - "&eUdziela potężnych efektów!"
+      - "&6Wartość niewyobrażalna!"
+    rzadkosc: "LEGENDARNA"
+    min_dlugosc: 100.0
+    max_dlugosc: 250.0
+    material: "COD"
+    cena: 1000.0
+    custom_model_data: 4
+    efekty:
+      - "LUCK:60:3"
+      - "STRENGTH:60:2"
+      - "REGENERATION:60:2"
+      - "WATER_BREATHING:120:1"
+      - "CONDUIT_POWER:120:1"
+
+  zloty_karp:
+    nazwa: "Złoty Karp"
+    display_name: "&6&lZłoty Karp"
+    lore:
+      - "&7Legendarny karp"
+      - "&7Przynosi szczęście na całe życie!"
+      - "&eCustomowa szansa: 5.0%"
+      - "&6Daje niesamowite szczęście!"
+    rzadkosc: "LEGENDARNA"
+    min_dlugosc: 40.0
+    max_dlugosc: 80.0
+    material: "TROPICAL_FISH"
+    cena: 800.0
+    custom_model_data: 4
+    efekty:
+      - "LUCK:120:3"
+      - "HERO_OF_THE_VILLAGE:120:2"
+    custom_szansa: 5.0
+
+  feniks_morski:
+    nazwa: "Feniks Morski"
+    display_name: "&6Feniks Morski"
+    lore:
+      - "&7Odradzająca się ryba z legend"
+      - "&7Mówi się że jest nieśmiertelna"
+      - "&cŻarzy się wewnętrznym ogniem!"
+    rzadkosc: "LEGENDARNA"
+    min_dlugosc: 80.0
+    max_dlugosc: 160.0
+    material: "TROPICAL_FISH"
+    cena: 900.0
+    custom_model_data: 4
+    efekty:
+      - "FIRE_RESISTANCE:120:1"
+      - "REGENERATION:90:3"
+      - "ABSORPTION:60:2"
+      - "STRENGTH:60:2"
+
+  neptuns_wybraniec:
+    nazwa: "Wybranie Neptuna"
+    display_name: "&6Wybraniec Neptuna"
+    lore:
+      - "&7Ryba błogosławiona przez boga mórz"
+      - "&7Dotknięta trójzębem Neptuna"
+      - "&bWładza nad wodami!"
+    rzadkosc: "LEGENDARNA"
+    min_dlugosc: 90.0
+    max_dlugosc: 200.0
+    material: "COD"
+    cena: 950.0
+    custom_model_data: 4
+    efekty:
+      - "WATER_BREATHING:300:1"
+      - "CONDUIT_POWER:180:1"
+      - "DOLPHINS_GRACE:180:2"
+      - "LUCK:90:2"
+
+  # ========================================
+  # MITYCZNE (0.1% szans)
+  # ========================================
+
+  lewiatian:
+    nazwa: "Lewiatian"
+    display_name: "&c&lLEWIATIAN"
+    lore:
+      - "&7Mityczna bestia z otchłani"
+      - "&7Jej złowienie to prawdziwy cud"
+      - "&eUdziela najbardziej potężnych efektów!"
+      - "&6Wartość nie do oszacowania!"
+      - "&c&lULTRA RZADKA!"
+    rzadkosc: "MITYCZNA"
+    min_dlugosc: 200.0
+    max_dlugosc: 500.0
+    material: "TROPICAL_FISH"
+    cena: 5000.0
+    custom_model_data: 5
+    efekty:
+      - "LUCK:180:4"
+      - "STRENGTH:180:3"
+      - "REGENERATION:180:3"
+      - "RESISTANCE:180:2"
+      - "SPEED:180:2"
+      - "ABSORPTION:120:3"
+
+  kraken:
+    nazwa: "Kraken"
+    display_name: "&c&lKRAKEN"
+    lore:
+      - "&7Potwór z otchłani"
+      - "&7Strach marynarzy"
+      - "&4Gigantyczne macki!"
+      - "&c&lNIEZWYKLE RZADKI!"
+    rzadkosc: "MITYCZNA"
+    min_dlugosc: 300.0
+    max_dlugosc: 600.0
+    material: "COD"
+    cena: 6000.0
+    custom_model_data: 5
+    efekty:
+      - "STRENGTH:200:4"
+      - "RESISTANCE:200:3"
+      - "WATER_BREATHING:300:1"
+      - "ABSORPTION:150:4"
+      - "REGENERATION:180:3"
+
+  smok_wodny:
+    nazwa: "Smok Wodny"
+    display_name: "&c&lSMOK WODNY"
+    lore:
+      - "&7Pradawny smok władający wodami"
+      - "&7Starszy niż oceany"
+      - "&bPotężniejszy niż burza!"
+      - "&c&lMITYCZNY!"
+    rzadkosc: "MITYCZNA"
+    min_dlugosc: 250.0
+    max_dlugosc: 550.0
+    material: "TROPICAL_FISH"
+    cena: 5500.0
+    custom_model_data: 5
+    efekty:
+      - "LUCK:180:3"
+      - "STRENGTH:180:4"
+      - "FIRE_RESISTANCE:300:1"
+      - "WATER_BREATHING:300:1"
+      - "REGENERATION:200:3"
+      - "SPEED:180:3"
+
+  # ========================================
+  # BOSKIE (0.01% szans - ULTRA MEGA RZADKIE!)
+  # ========================================
+
+  posejdon:
+    nazwa: "Posejdon"
+    display_name: "&d&l&kII&r &d&lPOSEJDON &d&l&kII"
+    lore:
+      - "&7Sam Bóg Mórz przyjął rybią formę"
+      - "&7Złowienie go jest niemożliwe..."
+      - "&7...ale jednak się udało!"
+      - "&e&lOTRZYMUJESZ WSZYSTKIE MOŻLIWE EFEKTY!"
+      - "&6&lWARTOŚĆ: BEZCENNA!"
+      - "&d&l&nNAJRZADSZA RYBA W CAŁYM PLUGINIE!"
+    rzadkosc: "BOSKA"
+    min_dlugosc: 500.0
+    max_dlugosc: 1000.0
+    material: "TROPICAL_FISH"
+    cena: 50000.0
+    custom_model_data: 100
+    efekty:
+      - "LUCK:600:5"
+      - "STRENGTH:600:5"
+      - "REGENERATION:600:5"
+      - "RESISTANCE:600:4"
+      - "SPEED:600:4"
+      - "ABSORPTION:600:5"
+      - "FIRE_RESISTANCE:600:1"
+      - "WATER_BREATHING:600:1"
+      - "NIGHT_VISION:600:1"
+      - "CONDUIT_POWER:600:1"
+      - "DOLPHINS_GRACE:600:3"
+      - "HERO_OF_THE_VILLAGE:600:5"
+
+  ryba_kosmosu:
+    nazwa: "Ryba Kosmosu"
+    display_name: "&d&l&kXX&r &5&lRYBA KOSMOSU &d&l&kXX"
+    lore:
+      - "&7Ryba która spadła z gwiazd"
+      - "&7Nie pochodzi z tego świata"
+      - "&7Jej ciało świeci blaskiem tysiąca słońc"
+      - "&e&lMOC KOSMOSU PRZEPŁYWA PRZEZ CIEBIE!"
+      - "&6&lZA KAŻDY CM +100 MONET!"
+      - "&d&l&nLEGENDA WŚRÓD LEGEND!"
+    rzadkosc: "BOSKA"
+    min_dlugosc: 100.0
+    max_dlugosc: 300.0
+    material: "TROPICAL_FISH"
+    cena: 100000.0
+    custom_model_data: 101
+    efekty:
+      - "LUCK:1200:10"
+      - "STRENGTH:600:5"
+      - "REGENERATION:600:5"
+      - "GLOWING:1200:1"
+      - "LEVITATION:10:1"
+      - "SLOW_FALLING:600:1"
+      - "ABSORPTION:600:5"
+      - "RESISTANCE:600:5"
+      - "SPEED:600:5"
+    custom_szansa: 0.005  # Jeszcze rzadsza niż standardowa Boska!
+
+  # Dodaj więcej customowych ryb według potrzeb

@@ -1,0 +1,67 @@
+name: SimpleFishing
+version: 1.0.0
+main: pl.tremeq.simplefishing.SimpleFishingPlugin
+api-version: 1.21
+author: tremeq
+description: Zaawansowany plugin do łowienia ryb
+
+softdepend:
+  - Vault
+  - PlaceholderAPI
+  - Citizens
+
+commands:
+  simplefishing:
+    description: Główna komenda pluginu SimpleFishing
+    aliases: [sf, fishing]
+    usage: /<command> [help|reload|contest|shop|gui]
+    permission: simplefishing.use
+
+permissions:
+  simplefishing.*:
+    description: Dostęp do wszystkich funkcji pluginu
+    default: op
+    children:
+      simplefishing.use: true
+      simplefishing.admin: true
+      simplefishing.shop: true
+      simplefishing.contest: true
+      simplefishing.gui: true
+      simplefishing.rod.upgrade: true
+      simplefishing.bait.use: true
+
+  simplefishing.use:
+    description: Podstawowe użycie pluginu
+    default: true
+
+  simplefishing.admin:
+    description: Komendy administracyjne
+    default: op
+
+  simplefishing.shop:
+    description: Dostęp do sklepu ryb
+    default: true
+
+  simplefishing.contest:
+    description: Udział w konkursach
+    default: true
+
+  simplefishing.contest.manage:
+    description: Zarządzanie konkursami
+    default: op
+
+  simplefishing.gui:
+    description: Dostęp do GUI pluginu
+    default: true
+
+  simplefishing.rod.upgrade:
+    description: Ulepszanie wędek
+    default: true
+
+  simplefishing.bait.use:
+    description: Używanie przynęt
+    default: true
+
+  simplefishing.reload:
+    description: Przeładowanie konfiguracji
+    default: op

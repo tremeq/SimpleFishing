@@ -1,0 +1,71 @@
+# ===========================================
+# SimpleFishing - Konfiguracja Wędek
+# ===========================================
+
+wedki:
+  # Wędki podstawowe
+  drewniana:
+    nazwa: "Drewniana Wędka"
+    display_name: "&7Drewniana Wędka"
+    lore:
+      - "&7Podstawowa wędka dla początkujących"
+      - "&7Maksymalnie 1 przynęta"
+    szczescie: 1.0
+    max_baity: 1
+    wytrzymalosc: 50.0
+    cena: 50.0
+
+  # Wędki zaawansowane
+  zelazna:
+    nazwa: "Żelazna Wędka"
+    display_name: "&fŻelazna Wędka"
+    lore:
+      - "&7Solidna wędka"
+      - "&7Zwiększone szczęście"
+      - "&7Maksymalnie 2 przynęty"
+    szczescie: 1.3
+    max_baity: 2
+    wytrzymalosc: 100.0
+    cena: 200.0
+
+  diamentowa:
+    nazwa: "Diamentowa Wędka"
+    display_name: "&bDiamentowa Wędka"
+    lore:
+      - "&7Luksusowa wędka"
+      - "&7Znacznie zwiększone szczęście"
+      - "&7Maksymalnie 3 przynęty"
+      - "&aDodatkowe bonusy!"
+    szczescie: 1.7
+    max_baity: 3
+    wytrzymalosc: 200.0
+    cena: 500.0
+
+  # Wędki legendarne
+  zlota:
+    nazwa: "Złota Wędka"
+    display_name: "&6Złota Wędka"
+    lore:
+      - "&7Legendarny sprzęt wędkarski"
+      - "&7Ogromne szczęście przy łowieniu"
+      - "&7Maksymalnie 4 przynęty"
+      - "&eIdealnie zmierzać w legendarne ryby!"
+    szczescie: 2.5
+    max_baity: 4
+    wytrzymalosc: 500.0
+    cena: 2000.0
+
+  # Wędki mityczne
+  neptuna:
+    nazwa: "Wędka Neptuna"
+    display_name: "&cWędka Neptuna"
+    lore:
+      - "&7Mityczna wędka władcy mórz"
+      - "&7Niesamowite szczęście"
+      - "&7Nieograniczona liczba przynęt"
+      - "&cNajpotężniejsza wędka!"
+      - "&6Gwarantuje częste łowienie rzadkich ryb!"
+    szczescie: 5.0
+    max_baity: 10
+    wytrzymalosc: 99999.0
+    cena: 10000.0
