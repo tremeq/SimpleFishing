@@ -15,6 +15,7 @@ import pl.tremeq.simplefishing.api.player.PlayerDataManager;
 import pl.tremeq.simplefishing.api.rod.RodManager;
 import pl.tremeq.simplefishing.api.shop.ShopManager;
 import pl.tremeq.simplefishing.commands.SimpleFishingCommand;
+import pl.tremeq.simplefishing.commands.SimpleFishingTabCompleter;
 import pl.tremeq.simplefishing.config.ConfigManager;
 import pl.tremeq.simplefishing.data.PlayerDataFileManager;
 import pl.tremeq.simplefishing.listeners.*;
@@ -136,7 +137,8 @@ public class SimpleFishingPlugin extends JavaPlugin implements SimpleFishingAPI 
      */
     private void rejestracjaKomend() {
         getCommand("simplefishing").setExecutor(new SimpleFishingCommand(this));
-        getLogger().info("Komendy zarejestrowane!");
+        getCommand("simplefishing").setTabCompleter(new SimpleFishingTabCompleter(this));
+        getLogger().info("Komendy i tab completion zarejestrowane!");
     }
 
     /**
