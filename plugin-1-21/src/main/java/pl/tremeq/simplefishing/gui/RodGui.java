@@ -236,9 +236,8 @@ public class RodGui extends SimpleFishingGui {
 
         int slot = event.getSlot();
 
-        // Powrót
+        // Powrót (slot 49)
         if (slot == 49) {
-        if (event.getSlot() == 22) {
             player.closeInventory();
             MainGui mainGui = new MainGui(player, plugin);
             mainGui.inicjalizuj();
