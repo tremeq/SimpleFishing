@@ -190,7 +190,11 @@ public class RodGui extends SimpleFishingGui {
             lore.add("&eKliknij aby nałożyć!");
         } else {
             lore.add("&c&lNie masz tej przynęty!");
-            lore.add("&7Zdobądź ją łowiąc ryby");
+            lore.add("");
+            lore.add("&7&oJak zdobyć przynęty:");
+            lore.add("&7▪ Łowienie ryb (losowa szansa)");
+            lore.add("&7▪ Nagrody za konkursy");
+            lore.add("&7▪ Sklep (wkrótce)");
         }
 
         return stworzItem(bait.getItemStack().getType(), "&d&l" + bait.getNazwa(), lore);

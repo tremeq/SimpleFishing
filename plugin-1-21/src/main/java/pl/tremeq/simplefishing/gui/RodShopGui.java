@@ -147,7 +147,7 @@ public class RodShopGui extends SimpleFishingGui {
         List<FishingRod> commonRods = plugin.getRodRegistry().getWedkiPoTierze(RodTier.COMMON);
 
         for (FishingRod rod : commonRods) {
-            String expectedName = rod.getTier().getKolor() + ChatColor.BOLD.toString() + " " + rod.getNazwa();
+            String expectedName = rod.getTier().getKolorowaNazwa() + ChatColor.BOLD.toString() + " " + rod.getNazwa();
             String actualName = display.getItemMeta() != null ? display.getItemMeta().getDisplayName() : "";
 
             if (actualName.equals(expectedName)) {

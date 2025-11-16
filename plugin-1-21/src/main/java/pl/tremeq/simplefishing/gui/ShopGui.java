@@ -169,11 +169,12 @@ public class ShopGui extends SimpleFishingGui {
 
         // Jeśli to slot dla ryb - pozwól na interakcję
         if (isFishSlot) {
-            // Nie anuluj - pozwól graczowi wkładać/wyciągać itemy
+            // Odanuluj event - pozwól graczowi wkładać/wyciągać itemy
+            event.setCancelled(false);
             return;
         }
 
-        // Reszta slotów - zablokuj
+        // Reszta slotów - zablokuj (już zablokowane przez GuiListener)
         event.setCancelled(true);
     }
 
