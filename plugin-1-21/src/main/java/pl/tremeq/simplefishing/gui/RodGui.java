@@ -172,7 +172,9 @@ public class RodGui extends SimpleFishingGui {
         lore.add("");
         lore.add("&e&lBonusy:");
         lore.add("&7Szczęście: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100));
-        lore.add("&7Czas trwania: &a" + bait.getCzasTrwania() + " sekund");
+        int uses = bait.getMaxUzycia();
+        String usesText = uses == -1 ? "∞" : String.valueOf(uses);
+        lore.add("&7Użycia: &a" + usesText);
         lore.add("");
 
         if (bait.getOpis() != null && !bait.getOpis().isEmpty()) {
@@ -279,9 +281,12 @@ public class RodGui extends SimpleFishingGui {
             // Aktualizuj wędkę w ręce gracza
             player.getInventory().setItemInMainHand(rod);
 
+            int uses = bait.getMaxUzycia();
+            String usesText = uses == -1 ? "∞" : String.valueOf(uses);
+
             player.sendMessage(koloruj("&aPomyślnie nałożono przynętę: &e" + bait.getNazwa() + "&a!"));
             player.sendMessage(koloruj("&7Bonus szczęścia: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100)));
-            player.sendMessage(koloruj("&7Czas trwania: &a" + bait.getCzasTrwania() + " sekund"));
+            player.sendMessage(koloruj("&7Liczba użyć: &a" + usesText));
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
         } else {
             player.sendMessage(koloruj("&cNie udało się nałożyć przynęty!"));
@@ -341,7 +346,9 @@ public class RodGui extends SimpleFishingGui {
             lore.add(koloruj("&7Typ: &f" + bait.getTyp()));
             lore.add(koloruj(""));
             lore.add(koloruj("&7Szczęście: &a+" + String.format("%.1f%%", bait.getSzczescie() * 100)));
-            lore.add(koloruj("&7Czas: &a" + bait.getCzasTrwania() + "s"));
+            int uses = bait.getMaxUzycia();
+            String usesText = uses == -1 ? "∞" : String.valueOf(uses);
+            lore.add(koloruj("&7Użycia: &a" + usesText));
 
             meta.setLore(lore);
 
@@ -353,7 +360,6 @@ public class RodGui extends SimpleFishingGui {
         }
 
         return item;
-        }
     }
 
     /**
