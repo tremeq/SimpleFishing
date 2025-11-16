@@ -334,7 +334,7 @@ public class FishCollectionGui extends SimpleFishingGui {
             player.closeInventory();
             MainGui mainGui = new MainGui(player, plugin);
             mainGui.inicjalizuj();
-            player.openInventory(mainGui.getInventory());
+            plugin.getGuiManager().otworzGui(player, mainGui);
             return;
         }
 
