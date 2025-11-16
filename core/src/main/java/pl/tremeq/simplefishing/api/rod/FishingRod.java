@@ -1,132 +1,218 @@
 package pl.tremeq.simplefishing.api.rod;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import pl.tremeq.simplefishing.api.bait.Bait;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 /**
- * Reprezentuje customową wędkę
- * Wędka może mieć założoną przynętę i dodatkowe modyfikatory
+ * Reprezentuje customową wędkę z tierem i możliwością upgrade
  *
  * @author tremeq
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class FishingRod {
 
     private final String id;
     private final String nazwa;
-    private final String displayName;
+    private final RodTier tier;
+    private final double cenaZakupu;
     private final List<String> lore;
-    private final ItemStack itemStack;
-    private final double podstawowySzczescie; // Bazowe szczęście wędki
-    private final int maxBaity; // Ile przynęt można nałożyć
-    private final double wytrzymalosc; // Bazowa wytrzymałość
-    private final List<RodEnchantment> ulepszenia;
-    private final double cena;
+    private final UpgradeRequirements upgradeRequirements;
 
-    private FishingRod(RodBuilder builder) {
+    private FishingRod(Builder builder) {
         this.id = builder.id;
         this.nazwa = builder.nazwa;
-        this.displayName = builder.displayName;
-        this.lore = builder.lore;
-        this.itemStack = builder.itemStack;
-        this.podstawowySzczescie = builder.podstawowySzczescie;
-        this.maxBaity = builder.maxBaity;
-        this.wytrzymalosc = builder.wytrzymalosc;
-        this.ulepszenia = builder.ulepszenia;
-        this.cena = builder.cena;
+        this.tier = builder.tier;
+        this.cenaZakupu = builder.cenaZakupu;
+        this.lore = new ArrayList<>(builder.lore);
+        this.upgradeRequirements = builder.upgradeRequirements;
     }
 
-    // Gettery
-    public String getId() { return id; }
-    public String getNazwa() { return nazwa; }
-    public String getDisplayName() { return displayName; }
-    public List<String> getLore() { return lore; }
-    public ItemStack getItemStack() { return itemStack.clone(); }
-    public double getPodstawowySzczescie() { return podstawowySzczescie; }
-    public int getMaxBaity() { return maxBaity; }
-    public double getWytrzymalosc() { return wytrzymalosc; }
-    public List<RodEnchantment> getUlepszenia() { return ulepszenia; }
-    public double getCena() { return cena; }
+    /**
+     * Pobiera ID wędki
+     * @return ID
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
-     * Tworzy ItemStack wędki
-     * @return ItemStack wędki
+     * Pobiera nazwę wędki
+     * @return Nazwa
      */
-    public ItemStack createRodItem() {
-        ItemStack item = itemStack.clone();
-        // NBT będzie dodane w implementacji 1.21
-        return item;
+    public String getNazwa() {
+        return nazwa;
+    }
+
+    /**
+     * Pobiera tier wędki
+     * @return Tier
+     */
+    public RodTier getTier() {
+        return tier;
+    }
+
+    /**
+     * Pobiera cenę zakupu (tylko dla COMMON tier)
+     * @return Cena
+     */
+    public double getCenaZakupu() {
+        return cenaZakupu;
+    }
+
+    /**
+     * Pobiera lore wędki
+     * @return Lista linii lore
+     */
+    public List<String> getLore() {
+        return new ArrayList<>(lore);
+    }
+
+    /**
+     * Pobiera wymagania do upgrade na następny tier
+     * @return UpgradeRequirements
+     */
+    public UpgradeRequirements getUpgradeRequirements() {
+        return upgradeRequirements;
+    }
+
+    /**
+     * Pobiera bonus do luck z tieru
+     * @return Luck bonus
+     */
+    public int getLuckBonus() {
+        return tier.getLuckBonus();
+    }
+
+    /**
+     * Pobiera mnożnik wytrzymałości z tieru
+     * @return Durability multiplier
+     */
+    public double getDurabilityMultiplier() {
+        return tier.getDurabilityMultiplier();
+    }
+
+    /**
+     * Sprawdza czy wędka może być ulepszona
+     * @return true jeśli nie jest max tier
+     */
+    public boolean czyMoznaUlepszac() {
+        return !tier.czyMaksymalny();
+    }
+
+    /**
+     * Pobiera następny tier wędki
+     * @return Następny tier lub null jeśli max
+     */
+    public RodTier getNastepnyTier() {
+        return tier.getNastepnyTier();
     }
 
     /**
      * Builder do tworzenia wędek
      */
-    public static class RodBuilder {
+    public static class Builder {
         private String id;
         private String nazwa;
-        private String displayName;
-        private List<String> lore;
-        private ItemStack itemStack;
-        private double podstawowySzczescie = 1.0;
-        private int maxBaity = 1;
-        private double wytrzymalosc = 100.0;
-        private List<RodEnchantment> ulepszenia = List.of();
-        private double cena = 0;
+        private RodTier tier = RodTier.COMMON;
+        private double cenaZakupu = 0;
+        private final List<String> lore = new ArrayList<>();
+        private UpgradeRequirements upgradeRequirements = new UpgradeRequirements();
 
-        public RodBuilder(String id) {
+        public Builder(String id) {
             this.id = id;
         }
 
-        public RodBuilder nazwa(String nazwa) {
+        public Builder nazwa(String nazwa) {
             this.nazwa = nazwa;
             return this;
         }
 
-        public RodBuilder displayName(String displayName) {
-            this.displayName = displayName;
+        public Builder tier(RodTier tier) {
+            this.tier = tier;
             return this;
         }
 
-        public RodBuilder lore(List<String> lore) {
-            this.lore = lore;
+        public Builder cenaZakupu(double cena) {
+            this.cenaZakupu = cena;
             return this;
         }
 
-        public RodBuilder itemStack(ItemStack itemStack) {
-            this.itemStack = itemStack;
+        public Builder addLore(String line) {
+            this.lore.add(line);
             return this;
         }
 
-        public RodBuilder podstawowySzczescie(double szczescie) {
-            this.podstawowySzczescie = szczescie;
+        public Builder lore(List<String> lore) {
+            this.lore.clear();
+            this.lore.addAll(lore);
             return this;
         }
 
-        public RodBuilder maxBaity(int max) {
-            this.maxBaity = max;
-            return this;
-        }
-
-        public RodBuilder wytrzymalosc(double wytrzymalosc) {
-            this.wytrzymalosc = wytrzymalosc;
-            return this;
-        }
-
-        public RodBuilder ulepszenia(List<RodEnchantment> ulepszenia) {
-            this.ulepszenia = ulepszenia;
-            return this;
-        }
-
-        public RodBuilder cena(double cena) {
-            this.cena = cena;
+        public Builder upgradeRequirements(UpgradeRequirements requirements) {
+            this.upgradeRequirements = requirements;
             return this;
         }
 
         public FishingRod build() {
+            if (id == null || nazwa == null) {
+                throw new IllegalStateException("ID i nazwa są wymagane");
+            }
             return new FishingRod(this);
+        }
+    }
+
+    /**
+     * Wymagania do upgrade wędki na następny tier
+     */
+    public static class UpgradeRequirements {
+        private double kosztMonet;
+        private final Map<String, Integer> requiredFish; // fishId -> ilosc
+        private final Map<Material, Integer> requiredMaterials; // material -> ilosc
+
+        public UpgradeRequirements() {
+            this.kosztMonet = 0;
+            this.requiredFish = new HashMap<>();
+            this.requiredMaterials = new HashMap<>();
+        }
+
+        public double getKosztMonet() {
+            return kosztMonet;
+        }
+
+        public UpgradeRequirements setKosztMonet(double kosztMonet) {
+            this.kosztMonet = kosztMonet;
+            return this;
+        }
+
+        public Map<String, Integer> getRequiredFish() {
+            return new HashMap<>(requiredFish);
+        }
+
+        public UpgradeRequirements addRequiredFish(String fishId, int ilosc) {
+            requiredFish.put(fishId, ilosc);
+            return this;
+        }
+
+        public Map<Material, Integer> getRequiredMaterials() {
+            return new HashMap<>(requiredMaterials);
+        }
+
+        public UpgradeRequirements addRequiredMaterial(Material material, int ilosc) {
+            requiredMaterials.put(material, ilosc);
+            return this;
+        }
+
+        /**
+         * Sprawdza czy są jakiekolwiek wymagania
+         * @return true jeśli są wymagania
+         */
+        public boolean hasRequirements() {
+            return kosztMonet > 0 || !requiredFish.isEmpty() || !requiredMaterials.isEmpty();
         }
     }
 }

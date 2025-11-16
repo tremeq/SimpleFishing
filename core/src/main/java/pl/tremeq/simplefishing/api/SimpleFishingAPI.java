@@ -8,6 +8,7 @@ import pl.tremeq.simplefishing.api.item.ItemRegistry;
 import pl.tremeq.simplefishing.api.contest.ContestManager;
 import pl.tremeq.simplefishing.api.player.PlayerDataManager;
 import pl.tremeq.simplefishing.api.rod.RodManager;
+import pl.tremeq.simplefishing.api.rod.RodRegistry;
 import pl.tremeq.simplefishing.api.shop.ShopManager;
 
 /**
@@ -54,6 +55,12 @@ public interface SimpleFishingAPI {
      * @return RodManager zarządzający customowymi wędkami
      */
     RodManager getRodManager();
+
+    /**
+     * Pobiera rejestr wędek
+     * @return RodRegistry zawierający wszystkie dostępne wędki
+     */
+    RodRegistry getRodRegistry();
 
     /**
      * Pobiera menedżera sklepu
